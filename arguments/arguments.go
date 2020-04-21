@@ -29,7 +29,7 @@ func (arguments *Arguments) config() {
 	arguments.argParse = flag.NewFlagSet("Arguments", flag.ContinueOnError)
 	arguments.Subcommand = os.Args[1]
 
-	arguments.Domain = arguments.argParse.String("d", "ARIZONA", "Specify the domain")
+	arguments.Domain = arguments.argParse.String("domain", "", "Specify the domain")
 	_ = arguments.argParse.Parse(os.Args[2:])
 }
 
