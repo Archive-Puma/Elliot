@@ -1,6 +1,8 @@
 package subdomain
 
 import (
+	"github.com/mrrobotproject/mrrobot/error"
+
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -10,21 +12,21 @@ import (
 
 type formatCrtSh struct { Name string `json:"name_value"` }
 
-func fetchCrtSh(domain string) []formatCrtSh {
+func fetchCrtSh(domain string) ([]formatCrtSh, *error.MrRobotError) {
 	// Compose the URL
 	url := fmt.Sprintf("https://crt.sh/?q=%s&output=json", domain)
 	// Request the data
 	resp, err := http.Get(url)
-	if err != nil || resp.StatusCode != 200 { return nil }
+	if err != nil || resp.StatusCode != 200 { return nil, error.NewWarning("Crt.sh is not available") }
 	// Grab the content
 	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil { return nil }
+	if err != nil { return nil, error.NewWarning("Crt.sh does not respond correctly") }
 	// Parse the JSON
 	subdomains := make([]formatCrtSh, 0)
 	err = json.Unmarshal([]byte(body), &subdomains)
-	if err != nil { return nil }
+	if err != nil { return nil, error.NewWarning("Bad JSON format using Crt.sh") }
 	// Return the JSON
-	return subdomains
+	return subdomains, nil
 }
 
 func filterCrtSh(data []formatCrtSh) []string {
@@ -41,7 +43,8 @@ func filterCrtSh(data []formatCrtSh) []string {
 	return subdomains
 }
 
-func MethodCtrSh(domain string) []string {
-	data := fetchCrtSh(domain)
-	return filterCrtSh(data)
+func MethodCtrSh(domain string) ([]string, *error.MrRobotError) {
+	data, err := fetchCrtSh(domain)
+	if err != nil { return nil, err }
+	return filterCrtSh(data), nil
 }

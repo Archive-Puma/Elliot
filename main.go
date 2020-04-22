@@ -2,7 +2,9 @@ package main
 
 import (
 	"github.com/mrrobotproject/mrrobot/arguments"
+	"github.com/mrrobotproject/mrrobot/error"
 	"github.com/mrrobotproject/mrrobot/subdomain"
+	"github.com/mrrobotproject/mrrobot/tui"
 	"github.com/mrrobotproject/mrrobot/validator"
 
 	"fmt"
@@ -10,19 +12,23 @@ import (
 
 func main() {
 	args := arguments.NewProgram("0.0.1")
+	tui.Banner(&args.Version)
 
 	switch args.Subcommand {
 	case "subdomain":
 		if ! validator.IsValidDomain(*args.Domain) {
-			fmt.Println("[!] Domain should be specified")
+			error.NewCritical("A valid domain should be specified").Resolve()
 		} else {
-			fmt.Printf("[+] Results for domain %s: \n%v", *args.Domain, subdomain.MethodHackerTarget(*args.Domain))
+			tui.PrintInfo("Subcommand", args.Subcommand)
+			tui.PrintInfo("Domain", *args.Domain)
+			now := tui.StartTime(&args.Subcommand)
+			subdomains := subdomain.GetAllConcurrent(*args.Domain)
+			for _, sDomain := range subdomains { fmt.Println(sDomain) }
+			tui.EndTime(&now)
 		}
-
 	default: args.ShowHelp()
 	}
 }
-
 
 
 /*

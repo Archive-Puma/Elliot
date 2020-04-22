@@ -17,11 +17,20 @@ type MrRobotError struct {
 	level	ErrorLevel
 }
 
-func NewError(message string, level ErrorLevel) *MrRobotError {
-	return &MrRobotError{ message: message, level: level }
+func NewError(level ErrorLevel, message string, a ...interface{}) *MrRobotError {
+	msg := fmt.Sprintf(message, a...)
+	return &MrRobotError{ message: msg, level: level }
 }
 
-func (error MrRobotError) Show() {
+func NewWarning(message string, a ...interface{}) *MrRobotError {
+	return NewError(WARNING, message, a...)
+}
+
+func NewCritical(message string, a ...interface{}) *MrRobotError {
+	return NewError(CRITICAL, message, a...)
+}
+
+func (error MrRobotError) Resolve() {
 	if error.level == CRITICAL {
 		fmt.Printf("[!] %s\n", error.message)
 		os.Exit(1)

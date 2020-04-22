@@ -1,6 +1,8 @@
 package subdomain
 
 import (
+	"github.com/mrrobotproject/mrrobot/error"
+
 	"bufio"
 	"bytes"
 	"fmt"
@@ -9,15 +11,15 @@ import (
 	"strings"
 )
 
-func fetchHackerTarget(domain string) []string {
+func MethodHackerTarget(domain string) ([]string, *error.MrRobotError) {
 	// Compose the URL
 	url := fmt.Sprintf("https://api.hackertarget.com/hostsearch/?q=%s", domain)
 	// Request the data
 	resp, err := http.Get(url)
-	if err != nil || resp.StatusCode != 200 { return nil }
+	if err != nil || resp.StatusCode != 200 { return nil, error.NewWarning("HackerTarget is not available") }
 	// Grab the content
 	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil { return nil }
+	if err != nil { return nil, error.NewWarning("HackerTarget does not respond correctly") }
 	// Parse the Response
 	subdomains := make([]string, 0)
 	sc := bufio.NewScanner(bytes.NewReader(body))
@@ -25,21 +27,5 @@ func fetchHackerTarget(domain string) []string {
 		splitter := strings.SplitN(sc.Text(), ",", 2)
 		subdomains = append(subdomains, splitter[0])
 	}
-	return subdomains
-}
-
-func filterHackerTarget(data []string) []string {
-	var subdomains []string
-	duplicates := make(map[string]int)
-	// Iterate over all the subdomains
-	for _, subdomain := range data {
-		duplicates[subdomain]++
-		if duplicates[subdomain] == 1 { subdomains = append(subdomains, subdomain) }
-	}
-	return subdomains
-}
-
-func MethodHackerTarget(domain string) []string {
-	data := fetchHackerTarget(domain)
-	return filterHackerTarget(data)
+	return subdomains, nil
 }
