@@ -35,9 +35,9 @@ func (arguments *Arguments) config() {
 
 func (arguments Arguments) ShowHelp() {
 	fmt.Printf("MrRobot v%s - Just another hacking framework\n\n", arguments.Version)
-	fmt.Printf("Usage: %s [subcommand] <args...>", filepath.Base(os.Args[0]))
+	fmt.Printf("Usage: %s [subcommand] <args...>\n", filepath.Base(os.Args[0]))
 	fmt.Printf("Subcommands:\n\tsubdomain\tFind subdomains related to a given domain\n")
 	fmt.Println("Options:")
-	flag.PrintDefaults()
+	fmt.Println("\t-domain\t\tSpecies a domain")
 	os.Exit(1)
 }
