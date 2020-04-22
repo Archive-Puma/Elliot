@@ -1,7 +1,7 @@
 package subdomain
 
 import (
-	"github.com/mrrobotproject/mrrobot/error"
+	"github.com/cosasdepuma/elliot/error"
 
 	"encoding/json"
 	"fmt"

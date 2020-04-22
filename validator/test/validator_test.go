@@ -1,7 +1,8 @@
 package test
 
 import (
-	"github.com/mrrobotproject/validator"
+	"github.com/cosasdepuma/elliot/validator"
+
 	"testing"
 )
 

@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/mrrobotproject/mrrobot/arguments"
-	"github.com/mrrobotproject/mrrobot/error"
-	"github.com/mrrobotproject/mrrobot/subdomain"
-	"github.com/mrrobotproject/mrrobot/tui"
-	"github.com/mrrobotproject/mrrobot/validator"
+	"github.com/cosasdepuma/elliot/arguments"
+	"github.com/cosasdepuma/elliot/error"
+	"github.com/cosasdepuma/elliot/subdomain"
+	"github.com/cosasdepuma/elliot/tui"
+	"github.com/cosasdepuma/elliot/validator"
 
 	"fmt"
 )
