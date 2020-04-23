@@ -13,6 +13,7 @@ func concurrentMethod(method methodFunc, domain string, wg sync.WaitGroup, chann
 	subdomains, err := method(domain)
 	if err != nil {
 		err.Resolve()
+		*channel <- nil
 	} else {
 		*channel <- subdomains
 	}
