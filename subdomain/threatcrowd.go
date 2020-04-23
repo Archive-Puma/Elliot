@@ -7,7 +7,6 @@ import (
     "fmt"
     "io/ioutil"
     "net/http"
-    "strings"
 )
 
 type formatThreatCrowd struct { Subdomains []string `json:"subdomains"` }

@@ -12,14 +12,15 @@ type Arguments struct {
   argParse *flag.FlagSet
   // Special information
   Subcommand	string
+  ProgramName   string
   Version		string
   // Arguments
   Domain		string
 }
 
 // Constructor
-func NewProgram(version string) *Arguments {
-  arguments := &Arguments{ Version: version }
+func NewProgram(name string, version string) *Arguments {
+  arguments := &Arguments{ ProgramName: name, Version: version }
   if len(os.Args) < 3 { arguments.ShowHelp() }
   arguments.config()
   return arguments

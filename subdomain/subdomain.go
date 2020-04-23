@@ -31,15 +31,23 @@ func filterDuplicates(data []string) []string {
 }
 
 func GetAllConcurrent(domain string) []string {
-	nMethods := 2
+	availableMethods := map[string]methodFunc{
+		"crtsh":		MethodCtrSh,
+		"hackertarget":	MethodHackerTarget,
+		"threatcrowd":	MethodThreatCrowd,
+	}
+
+	nMethods := len(availableMethods)
 	subdomains := make([]string, 0)
 	wg := sync.WaitGroup{}
 	channel := make(chan []string, 0)
 	defer close(channel)
 
 	wg.Add(nMethods)
-	go concurrentMethod(MethodCtrSh, domain, wg, &channel)
-	go concurrentMethod(MethodHackerTarget, domain, wg, &channel)
+
+	for _, method := range availableMethods {
+		go concurrentMethod(method, domain, wg, &channel)
+	}
 
 	for nMethods > 0 {
 		nMethods--

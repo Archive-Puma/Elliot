@@ -9,9 +9,9 @@ func Separator() {
 	fmt.Println("===============================================================")
 }
 
-func Banner(version *string) {
+func Banner(name *string, version *string) {
 	Separator()
-	fmt.Printf("MrRobot v%s\n", *version)
+	fmt.Printf("%s v%s\n", *name, *version)
 	Separator()
 }
 

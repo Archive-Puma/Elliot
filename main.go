@@ -11,8 +11,8 @@ import (
 )
 
 func main() {
-	args := arguments.NewProgram("0.0.1")
-	tui.Banner(&args.Version)
+	args := arguments.NewProgram("Elliot", "0.0.1")
+	tui.Banner(&args.ProgramName, &args.Version)
 
 	switch args.Subcommand {
 	case "subdomain":
@@ -22,14 +22,13 @@ func main() {
 			tui.PrintInfo("Subcommand", args.Subcommand)
 			tui.PrintInfo("Domain", args.Domain)
 			now := tui.StartTime(&args.Subcommand)
-			subdomains := subdomain.MethodThreatCrowd(args.Domain)
+			subdomains := subdomain.GetAllConcurrent(args.Domain)
 			for _, sDomain := range subdomains { fmt.Println(sDomain) }
 			tui.EndTime(&now)
 		}
 	default: args.ShowHelp()
 	}
 }
-
 
 /*
 	Documentation:
