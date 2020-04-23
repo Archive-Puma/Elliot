@@ -16,13 +16,13 @@ func main() {
 
 	switch args.Subcommand {
 	case "subdomain":
-		if ! validator.IsValidDomain(*args.Domain) {
+		if ! validator.IsValidDomain(args.Domain) {
 			error.NewCritical("A valid domain should be specified").Resolve()
 		} else {
 			tui.PrintInfo("Subcommand", args.Subcommand)
-			tui.PrintInfo("Domain", *args.Domain)
+			tui.PrintInfo("Domain", args.Domain)
 			now := tui.StartTime(&args.Subcommand)
-			subdomains := subdomain.GetAllConcurrent(*args.Domain)
+			subdomains := subdomain.MethodThreatCrowd(args.Domain)
 			for _, sDomain := range subdomains { fmt.Println(sDomain) }
 			tui.EndTime(&now)
 		}
