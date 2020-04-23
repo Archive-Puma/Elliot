@@ -1,7 +1,7 @@
 package subdomain
 
 import (
-	"github.com/cosasdepuma/elliot/error"
+	"github.com/cosasdepuma/elliot/app/error"
 
 	"sync"
 )
@@ -32,9 +32,9 @@ func filterDuplicates(data []string) []string {
 
 func GetAllConcurrent(domain string) []string {
 	availableMethods := map[string]methodFunc{
-		"crtsh":		MethodCtrSh,
-		"hackertarget":	MethodHackerTarget,
-		"threatcrowd":	MethodThreatCrowd,
+		"crtsh":        MethodCtrSh,
+		"hackertarget": MethodHackerTarget,
+		"threatcrowd":  MethodThreatCrowd,
 	}
 
 	nMethods := len(availableMethods)

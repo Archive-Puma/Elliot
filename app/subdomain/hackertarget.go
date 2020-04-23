@@ -1,7 +1,7 @@
 package subdomain
 
 import (
-	"github.com/cosasdepuma/elliot/error"
+	"github.com/cosasdepuma/elliot/app/error"
 
 	"bufio"
 	"bytes"

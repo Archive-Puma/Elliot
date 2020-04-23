@@ -1,7 +1,7 @@
 package test
 
 import (
-	"github.com/cosasdepuma/elliot/validator"
+	"github.com/cosasdepuma/elliot/app/validator"
 
 	"testing"
 )
