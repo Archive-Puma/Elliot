@@ -20,6 +20,7 @@ type Arguments struct {
 	DisplayVersion bool
 	// Arguments
 	Domain  string
+	URL     string
 	Verbose bool
 }
 
@@ -58,6 +59,9 @@ func (arguments *Arguments) config() {
 	arguments.argParse.StringVar(&arguments.Domain, "d", "", "Specify the domain")
 	arguments.argParse.StringVar(&arguments.Domain, "domain", "", "Specify the domain")
 
+	arguments.argParse.StringVar(&arguments.URL, "u", "", "Specify an URL")
+	arguments.argParse.StringVar(&arguments.URL, "url", "", "Specify an URL")
+
 	arguments.argParse.BoolVar(&arguments.Verbose, "v", false, "Verbose output")
 	arguments.argParse.BoolVar(&arguments.Verbose, "verbose", false, "Verbose output")
 
@@ -68,12 +72,15 @@ func (arguments *Arguments) config() {
 func (arguments Arguments) ShowHelp() {
 	fmt.Printf("%s v%s - Just another hacking framework\n\n", arguments.ProgramName, arguments.Version)
 	fmt.Printf("Usage: %s [subcommand] <args...>\n", filepath.Base(os.Args[0]))
-	fmt.Printf("Subcommands:\n\tsubdomain\t\tFind subdomains related to a given domain\n")
+	fmt.Println("Subcommands:")
+	fmt.Println("\trobots\t\t\tFind and display robots.txt file from an URL")
+	fmt.Println("\tsubdomain\t\tFind subdomains related to a given domain")
 	fmt.Println("Options:")
 	fmt.Println("\t-h, -help\t\tDisplay this message")
 	fmt.Println("\t-version\t\tDisplay the version")
 	fmt.Println("Arguments:")
 	fmt.Println("\t-d, -domain\t\tSpecify a domain")
+	fmt.Println("\t-u, -url\t\tSpecify an URL")
 	fmt.Println("\t-v, -verbose\t\tVerbose output")
 	os.Exit(1)
 }

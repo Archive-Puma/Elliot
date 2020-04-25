@@ -34,8 +34,8 @@ func filterDuplicates(data []string) []string {
 	return subdomains
 }
 
-// GetAllConcurrent TODO: Doc
-func GetAllConcurrent(domain string, verbosity bool) []string {
+// FindAllConcurrent TODO: Doc
+func FindAllConcurrent(domain string, verbosity bool) []string {
 	availableMethods := map[string]methodFunc{
 		"crtsh":        methodCtrSh,
 		"hackertarget": methodHackerTarget,
