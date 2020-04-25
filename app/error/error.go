@@ -5,34 +5,43 @@ import (
 	"os"
 )
 
-type ErrorLevel int
+type tLevel int
 
 const (
-	CRITICAL 	ErrorLevel = 10
-	WARNING		ErrorLevel = 20
+	// CRITICAL TODO: Doc
+	CRITICAL tLevel = 10
+	// WARNING TODO: Doc
+	WARNING tLevel = 20
 )
 
+// MrRobotError TODO: Doc
 type MrRobotError struct {
 	message string
-	level	ErrorLevel
+	level   tLevel
 }
 
-func NewError(level ErrorLevel, message string, a ...interface{}) *MrRobotError {
+// NewError TODO: Doc
+func NewError(level tLevel, message string, a ...interface{}) *MrRobotError {
 	msg := fmt.Sprintf(message, a...)
-	return &MrRobotError{ message: msg, level: level }
+	return &MrRobotError{message: msg, level: level}
 }
 
+// NewWarning TODO: Doc
 func NewWarning(message string, a ...interface{}) *MrRobotError {
 	return NewError(WARNING, message, a...)
 }
 
+// NewCritical TODO: Doc
 func NewCritical(message string, a ...interface{}) *MrRobotError {
 	return NewError(CRITICAL, message, a...)
 }
 
+// Resolve TODO: Doc
 func (error MrRobotError) Resolve() {
 	if error.level == CRITICAL {
 		fmt.Printf("[!] %s\n", error.message)
 		os.Exit(1)
-	} else { fmt.Printf("[-] %s\n", error.message) }
+	} else {
+		fmt.Printf("[-] %s\n", error.message)
+	}
 }

@@ -11,15 +11,19 @@ import (
 	"strings"
 )
 
-func MethodHackerTarget(domain string) ([]string, *error.MrRobotError) {
+func methodHackerTarget(domain string) ([]string, *error.MrRobotError) {
 	// Compose the URL
 	url := fmt.Sprintf("https://api.hackertarget.com/hostsearch/?q=%s", domain)
 	// Request the data
 	resp, err := http.Get(url)
-	if err != nil || resp.StatusCode != 200 { return nil, error.NewWarning("HackerTarget is not available") }
+	if err != nil || resp.StatusCode != 200 {
+		return nil, error.NewWarning("HackerTarget is not available")
+	}
 	// Grab the content
 	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil { return nil, error.NewWarning("HackerTarget does not respond correctly") }
+	if err != nil {
+		return nil, error.NewWarning("HackerTarget does not respond correctly")
+	}
 	// Parse the Response
 	subdomains := make([]string, 0)
 	sc := bufio.NewScanner(bytes.NewReader(body))

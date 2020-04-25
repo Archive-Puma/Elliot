@@ -5,16 +5,19 @@ import (
 	"time"
 )
 
+// Separator TODO: Doc
 func Separator() {
 	fmt.Println("===============================================================")
 }
 
+// Banner TODO: Doc
 func Banner(name *string, version *string) {
 	Separator()
 	fmt.Printf("%s v%s\n", *name, *version)
 	Separator()
 }
 
+// StartTime TODO: Doc
 func StartTime(process *string) time.Time {
 	now := time.Now()
 	Separator()
@@ -23,6 +26,7 @@ func StartTime(process *string) time.Time {
 	return now
 }
 
+// EndTime TODO: Doc
 func EndTime(start *time.Time) time.Time {
 	now := time.Now()
 	Separator()
@@ -31,6 +35,7 @@ func EndTime(start *time.Time) time.Time {
 	return now
 }
 
+// PrintInfo TODO: Doc
 func PrintInfo(info string, message string) {
 	fmt.Printf("[+] %-10s : %s\n", info, message)
 }
