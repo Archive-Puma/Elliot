@@ -28,6 +28,6 @@ for GOOS in $OS; do
     BINFILE="${APPNAME}-${GOOS}-${GOARCH}"
     test "${GOOS}" = "windows" && BINFILE="${BINFILE}.exe"
 
-    GOOS="${GOOS}" GOARCH="${GOARCH}" go build -o "${DISTDIR}/${BINFILE}" ../main.go
+    GOOS="${GOOS}" GOARCH="${GOARCH}" go build -o "${DISTDIR}/${BINFILE}" "${PROJECTDIR}/main.go"
   done
 done
