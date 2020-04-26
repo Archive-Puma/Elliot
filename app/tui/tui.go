@@ -3,6 +3,8 @@ package tui
 import (
 	"fmt"
 	"time"
+
+	"github.com/cosasdepuma/elliot/app/config"
 )
 
 // Separator TODO: Doc
@@ -11,10 +13,9 @@ func Separator() {
 }
 
 // Banner TODO: Doc
-func Banner(name *string, version *string) {
+func Banner() {
 	Separator()
-	fmt.Printf("%s v%s\n", *name, *version)
-	Separator()
+	fmt.Printf("%s v%s\n", config.Args.ProgramName, config.Args.Version)
 }
 
 // StartTime TODO: Doc

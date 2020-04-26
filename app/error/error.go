@@ -37,11 +37,13 @@ func NewCritical(message string, a ...interface{}) *MrRobotError {
 }
 
 // Resolve TODO: Doc
-func (error MrRobotError) Resolve() {
-	if error.level == CRITICAL {
-		fmt.Printf("[!] %s\n", error.message)
-		os.Exit(1)
-	} else {
-		fmt.Printf("[-] %s\n", error.message)
+func (err MrRobotError) Resolve(verbosity bool) {
+	if verbosity {
+		if err.level == CRITICAL {
+			fmt.Printf("[!] %s\n", err.message)
+			os.Exit(1)
+		} else {
+			fmt.Printf("[-] %s\n", err.message)
+		}
 	}
 }
