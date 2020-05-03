@@ -4,4 +4,4 @@ Elliot is the new favorite hacking framework that will accompany you during your
 For full guide visit: https://github.com/cosasdepuma/elliot
 */
 
-package elliot
+package main
