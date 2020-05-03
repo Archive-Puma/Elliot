@@ -24,6 +24,7 @@ type sArguments struct {
 	DisplayHelp    bool
 	DisplayVersion bool
 	// Arguments
+	Bare     bool
 	Domain   string
 	Disallow bool
 	Extended bool
@@ -42,6 +43,9 @@ func NewProgram(name string, version string) {
 	Args.argParse.BoolVar(&Args.DisplayHelp, "help", false, "")
 
 	Args.argParse.BoolVar(&Args.DisplayVersion, "version", false, "")
+
+	Args.argParse.BoolVar(&Args.Bare, "b", false, "")
+	Args.argParse.BoolVar(&Args.Bare, "bare", false, "")
 
 	Args.argParse.BoolVar(&Args.Disallow, "disallow", false, "")
 
@@ -80,6 +84,7 @@ func ShowHelp() {
 	Args.Print("-h, -help", "Display this message")
 	Args.Print("-version", "Display the version")
 	fmt.Println("Arguments:")
+	Args.Print("-b, -bare", "Bare mode (Only print results)")
 	Args.Print("-d, -domain", "Target domain")
 	Args.Print("-u, -url", "Target URL")
 	Args.Print("-v, -verbose", "Verbosity")

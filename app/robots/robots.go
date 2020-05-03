@@ -75,7 +75,7 @@ func filterDisallow(robots []string) []string {
 func extendedMode(robots []string) []string {
 	extended := make([]string, 0)
 	for _, robot := range robots {
-		if strings.HasPrefix(robot, "Allow: ") || strings.HasPrefix(robot, "Disallow: ") {
+		if strings.HasPrefix(robot, "Allow: ") || strings.HasPrefix(robot, "Disallow: ") || strings.HasPrefix(robot, "/") {
 			splits := strings.SplitN(robot, "/", 2)
 			url := config.Args.URL
 			if !strings.HasSuffix(url, "/") {

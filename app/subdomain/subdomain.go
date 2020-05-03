@@ -16,6 +16,56 @@ type Subcommand struct{}
 
 type function func(string) ([]string, *error.MrRobotError)
 
+// Help TODO: Doc
+func (s Subcommand) Help() {
+	config.Args.Print("-d, -domain", "Target domain")
+}
+
+// Check TODO: Doc
+func (s Subcommand) Check() *error.MrRobotError {
+	if validator.IsValidDomain(config.Args.Domain) {
+		tui.PrintInfo("Domain", config.Args.Domain)
+	} else {
+		return error.NewWarning("A valid domain should be specified")
+	}
+
+	return nil
+}
+
+// Run TODO: Doc
+func (s Subcommand) Run() ([]string, []*error.MrRobotError) {
+	subdomains := make([]string, 0)
+	errors := []*error.MrRobotError{}
+
+	availableMethods := map[string]function{
+		"crtsh":        methodCtrSh,
+		"hackertarget": methodHackerTarget,
+		"threatcrowd":  methodThreatCrowd,
+	}
+
+	nMethods := len(availableMethods)
+	wg := sync.WaitGroup{}
+	channel := make(chan []string, 0)
+	defer close(channel)
+
+	wg.Add(nMethods)
+
+	for _, method := range availableMethods {
+		go concurrentMethod(method, &wg, &channel)
+	}
+
+	for nMethods > 0 {
+		nMethods--
+		subdomains = append(subdomains, <-channel...)
+	}
+
+	for _, subdomain := range filterDuplicates(subdomains) {
+		fmt.Println(subdomain)
+	}
+
+	return subdomains, errors
+}
+
 func concurrentMethod(method function, wg *sync.WaitGroup, channel *chan []string) {
 	defer wg.Done()
 	subdomains, err := method(config.Args.Domain)
@@ -38,49 +88,4 @@ func filterDuplicates(data []string) []string {
 		}
 	}
 	return subdomains
-}
-
-// Check TODO: Doc
-func (s Subcommand) Check() *error.MrRobotError {
-	if validator.IsValidDomain(config.Args.Domain) {
-		tui.PrintInfo("Domain", config.Args.Domain)
-	} else {
-		return error.NewWarning("A valid domain should be specified")
-	}
-
-	return nil
-}
-
-// Run TODO: Doc
-func (s Subcommand) Run() []*error.MrRobotError {
-	errors := []*error.MrRobotError{}
-
-	availableMethods := map[string]function{
-		"crtsh":        methodCtrSh,
-		"hackertarget": methodHackerTarget,
-		"threatcrowd":  methodThreatCrowd,
-	}
-
-	nMethods := len(availableMethods)
-	subdomains := make([]string, 0)
-	wg := sync.WaitGroup{}
-	channel := make(chan []string, 0)
-	defer close(channel)
-
-	wg.Add(nMethods)
-
-	for _, method := range availableMethods {
-		go concurrentMethod(method, &wg, &channel)
-	}
-
-	for nMethods > 0 {
-		nMethods--
-		subdomains = append(subdomains, <-channel...)
-	}
-
-	for _, subdomain := range filterDuplicates(subdomains) {
-		fmt.Println(subdomain)
-	}
-
-	return errors
 }

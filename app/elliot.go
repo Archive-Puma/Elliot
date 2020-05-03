@@ -4,6 +4,7 @@ import (
 	"github.com/cosasdepuma/elliot/app/config"
 	"github.com/cosasdepuma/elliot/app/error"
 	"github.com/cosasdepuma/elliot/app/robots"
+	"github.com/cosasdepuma/elliot/app/subdomain"
 	"github.com/cosasdepuma/elliot/app/tui"
 
 	"fmt"
@@ -39,7 +40,8 @@ func Entrypoint() {
 	tui.Banner()
 
 	modules := map[string]Subcommand{
-		"robots": robots.Subcommand{},
+		"robots":    robots.Subcommand{},
+		"subdomain": subdomain.Subcommand{},
 	}
 
 	if config.Args.Subcommand == "help" || config.Args.Subcommand == "man" {
@@ -47,7 +49,7 @@ func Entrypoint() {
 			tui.Separator()
 			tui.PrintInfo("Subcommand", os.Args[2])
 			tui.Separator()
-			fmt.Println("Arguments:\n")
+			fmt.Println("Arguments:")
 			subcommand.Help()
 			tui.Separator()
 		} else {
