@@ -6,7 +6,7 @@
 
 [![Golang](https://img.shields.io/github/go-mod/go-version/cosasdepuma/elliot?style=for-the-badge)](https://www.golang.org/)
 [![Latest Version](https://img.shields.io/badge/latest-v0.0.2-green?style=for-the-badge)](https://github.com/CosasDePuma/Elliot/releases/)
-[![License](https://img.shields.io/github/license/cosasdepuma/elliot?style=for-the-badge)](./LICENSE)
+[![License](https://img.shields.io/github/license/cosasdepuma/elliot?style=for-the-badge&color=important)](./LICENSE)
 
 If you do not know **Elliot**, you are not aware of the number of possibilities that you are wasting when it comes to perform your pentestings. A new all-in-one hacking framework is going to be unleashed... or is it just a product of your imagination?
 
