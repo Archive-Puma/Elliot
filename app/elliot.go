@@ -1,24 +1,25 @@
 package elliot
 
 import (
+	"github.com/cosasdepuma/elliot/app/cli"
 	"github.com/cosasdepuma/elliot/app/config"
 	"github.com/cosasdepuma/elliot/app/error"
-	"github.com/cosasdepuma/elliot/app/robots"
-	"github.com/cosasdepuma/elliot/app/subdomain"
-	"github.com/cosasdepuma/elliot/app/tui"
+
+	"github.com/cosasdepuma/elliot/app/subcommand/robots"
+	"github.com/cosasdepuma/elliot/app/subcommand/subdomain"
 
 	"fmt"
 	"os"
 )
 
 func startProcess(subcommand Subcommand) {
-	now := tui.StartTime(&config.Args.Subcommand)
-	tui.PrintInfo("Subcommand", config.Args.Subcommand)
+	now := cli.StartTime(&config.Args.Subcommand)
+	cli.PrintInfo("Subcommand", config.Args.Subcommand)
 	err := subcommand.Check()
 	if err != nil {
 		err.Resolve(true)
 	}
-	tui.Separator()
+	cli.Separator()
 	if err != nil {
 		os.Exit(1)
 	}
@@ -29,7 +30,7 @@ func startProcess(subcommand Subcommand) {
 	for _, result := range results {
 		fmt.Println(result)
 	}
-	tui.EndTime(&now)
+	cli.EndTime(&now)
 }
 
 // Entrypoint TODO: Doc
@@ -37,7 +38,7 @@ func Entrypoint() {
 	hasSubcommandError := false
 
 	config.NewProgram("Elliot", "0.0.2")
-	tui.Banner()
+	cli.Banner()
 
 	modules := map[string]Subcommand{
 		"robots":    robots.Subcommand{},
@@ -46,12 +47,12 @@ func Entrypoint() {
 
 	if config.Args.Subcommand == "help" || config.Args.Subcommand == "man" {
 		if subcommand, ok := modules[os.Args[2]]; ok {
-			tui.Separator()
-			tui.PrintInfo("Subcommand", os.Args[2])
-			tui.Separator()
+			cli.Separator()
+			cli.PrintInfo("Subcommand", os.Args[2])
+			cli.Separator()
 			fmt.Println("Arguments:")
 			subcommand.Help()
-			tui.Separator()
+			cli.Separator()
 		} else {
 			hasSubcommandError = true
 		}

@@ -3,9 +3,9 @@ package subdomain
 import (
 	"fmt"
 
+	"github.com/cosasdepuma/elliot/app/cli"
 	"github.com/cosasdepuma/elliot/app/config"
 	"github.com/cosasdepuma/elliot/app/error"
-	"github.com/cosasdepuma/elliot/app/tui"
 	"github.com/cosasdepuma/elliot/app/validator"
 
 	"sync"
@@ -24,7 +24,7 @@ func (s Subcommand) Help() {
 // Check TODO: Doc
 func (s Subcommand) Check() *error.MrRobotError {
 	if validator.IsValidDomain(config.Args.Domain) {
-		tui.PrintInfo("Domain", config.Args.Domain)
+		cli.PrintInfo("Domain", config.Args.Domain)
 	} else {
 		return error.NewWarning("A valid domain should be specified")
 	}

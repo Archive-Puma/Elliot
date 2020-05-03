@@ -1,9 +1,9 @@
 package robots
 
 import (
+	"github.com/cosasdepuma/elliot/app/cli"
 	"github.com/cosasdepuma/elliot/app/config"
 	"github.com/cosasdepuma/elliot/app/error"
-	"github.com/cosasdepuma/elliot/app/tui"
 	"github.com/cosasdepuma/elliot/app/validator"
 
 	"fmt"
@@ -25,7 +25,7 @@ func (s Subcommand) Help() {
 // Check TODO: Doc
 func (s Subcommand) Check() *error.MrRobotError {
 	if validator.IsValidURL(config.Args.URL) {
-		tui.PrintInfo("URL", config.Args.URL)
+		cli.PrintInfo("URL", config.Args.URL)
 	} else {
 		return error.NewWarning("A valid URL should be specified")
 	}
