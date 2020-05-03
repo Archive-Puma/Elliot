@@ -28,6 +28,8 @@ type sArguments struct {
 	Domain   string
 	Disallow bool
 	Extended bool
+	Ports    []int
+	RawPorts string
 	URL      string
 	Verbose  bool
 }
@@ -53,6 +55,10 @@ func NewProgram(name string, version string) {
 	Args.argParse.StringVar(&Args.Domain, "domain", "", "")
 
 	Args.argParse.BoolVar(&Args.Extended, "extended", false, "")
+
+	Args.argParse.StringVar(&Args.RawPorts, "p", "", "")
+	Args.argParse.StringVar(&Args.RawPorts, "port", "", "")
+	Args.argParse.StringVar(&Args.RawPorts, "ports", "", "")
 
 	Args.argParse.StringVar(&Args.URL, "u", "", "")
 	Args.argParse.StringVar(&Args.URL, "url", "", "")

@@ -5,6 +5,7 @@ import (
 	"github.com/cosasdepuma/elliot/app/config"
 	"github.com/cosasdepuma/elliot/app/error"
 
+	"github.com/cosasdepuma/elliot/app/subcommand/portscanner"
 	"github.com/cosasdepuma/elliot/app/subcommand/robots"
 	"github.com/cosasdepuma/elliot/app/subcommand/subdomain"
 
@@ -41,8 +42,10 @@ func Entrypoint() {
 	cli.Banner()
 
 	modules := map[string]Subcommand{
-		"robots":    robots.Subcommand{},
-		"subdomain": subdomain.Subcommand{},
+		"nmap":        portscanner.Subcommand{},
+		"portscanner": portscanner.Subcommand{},
+		"robots":      robots.Subcommand{},
+		"subdomain":   subdomain.Subcommand{},
 	}
 
 	if config.Args.Subcommand == "help" || config.Args.Subcommand == "man" {
