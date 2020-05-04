@@ -1,7 +1,7 @@
 <h1 align="center">
-  <img src=".github/readme/elliot.gif" alt="Elliot" width="500">
+  <img src="https://raw.githubusercontent.com/CosasDePuma/Elliot/master/.github/readme/elliot.gif" alt="Elliot" width="500">
   <br><br>
-  <img src=".github/readme/logo.png" alt="Logo" width="600">
+  <img src="https://raw.githubusercontent.com/CosasDePuma/Elliot/master/.github/readme/logo.png" alt="Logo" width="600">
 </h1>
 
 [![Golang](https://img.shields.io/github/go-mod/go-version/cosasdepuma/elliot?style=for-the-badge)](https://pkg.go.dev/mod/github.com/cosasdepuma/elliot)
@@ -72,7 +72,7 @@ You can automate the compilation process using the script found inside the **scr
 | darwin/386 | darwin/amd64 |
 | freebsd/386 | freebsd/amd64 |
 
-:octopus: Support the developer!
+🐙 Support the developer!
 ----
 Everything I do and publish can be used for free whenever I receive my corresponding merit.
 
