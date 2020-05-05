@@ -35,7 +35,6 @@ func (s Subcommand) Check() *error.MrRobotError {
 
 // Run TODO: Doc
 func (s Subcommand) Run() ([]string, []*error.MrRobotError) {
-	results := make([]string, 0)
 	errors := make([]*error.MrRobotError, 0)
 
 	path := fmt.Sprintf("%s/robots.txt", config.Args.URL)
@@ -50,7 +49,7 @@ func (s Subcommand) Run() ([]string, []*error.MrRobotError) {
 		return nil, append(errors, error.NewWarning("Cannot read robots.txt"))
 	}
 
-	results = strings.Split(strings.TrimSpace(string(bRobots)), "\n")
+	results := strings.Split(strings.TrimSpace(string(bRobots)), "\n")
 
 	if config.Args.Disallow {
 		results = filterDisallow(results)

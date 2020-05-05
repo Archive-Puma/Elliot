@@ -2,6 +2,7 @@ package portscanner
 
 import "fmt"
 
+// Port TODO: Doc
 type Port struct {
 	protocol string
 	number   int

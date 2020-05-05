@@ -5,6 +5,7 @@
 </h1>
 
 [![Golang](https://img.shields.io/github/go-mod/go-version/cosasdepuma/elliot?style=for-the-badge)](https://pkg.go.dev/mod/github.com/cosasdepuma/elliot)
+[![Go Report Card](https://goreportcard.com/badge/github.com/cosasdepuma/elliot?style=for-the-badge)](https://goreportcard.com/report/github.com/cosasdepuma/elliot)
 [![Latest Version](https://img.shields.io/badge/latest-v0.0.2-green?style=for-the-badge)](https://github.com/CosasDePuma/Elliot/releases/)
 [![License](https://img.shields.io/github/license/cosasdepuma/elliot?style=for-the-badge&color=important)](./LICENSE)
 

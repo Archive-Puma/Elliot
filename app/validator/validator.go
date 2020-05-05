@@ -20,6 +20,24 @@ func IsValidURL(url string) bool {
 	return expression.MatchString(url)
 }
 
+func parsePortRange(ports map[int]struct{}, rawStart string, rawEnd string) bool {
+	start, err := strconv.ParseInt(rawStart, 10, 32)
+	if err != nil || start < 1 || start > 65535 {
+		return false
+	}
+
+	end, err := strconv.ParseInt(rawEnd, 10, 32)
+	if err != nil || end < 1 || end > 65535 || end <= start {
+		return false
+	}
+
+	for port := start; port <= end; port++ {
+		ports[int(port)] = struct{}{}
+	}
+
+	return true
+}
+
 // ParsePorts TODO: Doc
 func ParsePorts(rawPorts string) ([]int, bool) {
 	ports := make(map[int]struct{}, 0)
@@ -29,20 +47,9 @@ func ParsePorts(rawPorts string) ([]int, bool) {
 		rawPort := strings.TrimSpace(rawPort)
 		ranged := strings.Split(rawPort, "-")
 		if len(ranged) == 2 {
-			rawStart, rawEnd := strings.TrimSpace(ranged[0]), strings.TrimSpace(ranged[1])
-
-			start, err := strconv.ParseInt(rawStart, 10, 32)
-			if err != nil || start < 1 || start > 65535 {
+			ok := parsePortRange(ports, ranged[0], ranged[1])
+			if !ok {
 				return nil, false
-			}
-
-			end, err := strconv.ParseInt(rawEnd, 10, 32)
-			if err != nil || end < 1 || end > 65535 || end <= start {
-				return nil, false
-			}
-
-			for port := start; port <= end; port++ {
-				ports[int(port)] = struct{}{}
 			}
 		} else if len(ranged) == 1 {
 			port, err := strconv.ParseInt(rawPort, 10, 32)
@@ -55,8 +62,8 @@ func ParsePorts(rawPorts string) ([]int, bool) {
 		}
 	}
 
-	keys := make([]int, 0, len(ports))
-	for k := range ports {
+	keys := make([]int, 0)
+	for k := range keys {
 		keys = append(keys, k)
 	}
 
