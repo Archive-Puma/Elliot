@@ -2,13 +2,12 @@ package subdomain
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/cosasdepuma/elliot/app/cli"
 	"github.com/cosasdepuma/elliot/app/config"
 	"github.com/cosasdepuma/elliot/app/error"
 	"github.com/cosasdepuma/elliot/app/validator"
-
-	"sync"
 )
 
 // Subcommand TODO: Doc
