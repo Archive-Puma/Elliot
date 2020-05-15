@@ -1,16 +1,17 @@
 package elliot
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/cosasdepuma/elliot/app/cli"
 	"github.com/cosasdepuma/elliot/app/config"
 	"github.com/cosasdepuma/elliot/app/error"
+	"github.com/cosasdepuma/elliot/app/tui"
 
 	"github.com/cosasdepuma/elliot/app/subcommand/portscanner"
 	"github.com/cosasdepuma/elliot/app/subcommand/robots"
 	"github.com/cosasdepuma/elliot/app/subcommand/subdomain"
-
-	"fmt"
-	"os"
 )
 
 func startProcess(subcommand Subcommand) {
@@ -34,8 +35,8 @@ func startProcess(subcommand Subcommand) {
 	cli.EndTime(&now)
 }
 
-// Entrypoint TODO: Doc
-func Entrypoint() {
+// EntrypointOld TODO: Doc
+func EntrypointOld() {
 	hasSubcommandError := false
 
 	config.NewProgram("Elliot", "0.0.2")
@@ -69,6 +70,21 @@ func Entrypoint() {
 		error.NewWarning("A valid subcommand should be specified").Resolve(true)
 		fmt.Println()
 		config.ShowHelp()
+	}
+}
+
+// Entrypoint TODO: Doc
+func Entrypoint() {
+	modules := map[string]Subcommand{
+		"nmap":        portscanner.Subcommand{},
+		"portscanner": portscanner.Subcommand{},
+		"robots":      robots.Subcommand{},
+		"subdomain":   subdomain.Subcommand{},
+	}
+	_ = modules
+
+	if err := tui.ShowTUI(); err != nil {
+		err.Resolve(true)
 	}
 }
 
