@@ -1,16 +1,52 @@
-package tui
+package cli
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/jroimartin/gocui"
 
+	"github.com/cosasdepuma/elliot/app/env"
 	mrerr "github.com/cosasdepuma/elliot/app/error"
+	"github.com/cosasdepuma/elliot/app/plugins"
 )
 
 func exitApplication(_ *gocui.Gui, _ *gocui.View) error {
 	return gocui.ErrQuit
 }
 
-func disable(_ *gocui.Gui, view *gocui.View) error {
+func exitPopup(gui *gocui.Gui, _ *gocui.View) error {
+	Popup.Active = false
+	_, err := setCurrentViewOnTop(gui, Views[Current].name)
+	return err
+}
+
+func runModule(gui *gocui.Gui, _ *gocui.View) error {
+	targetView, err := gui.View("Target")
+	if err != nil {
+		return err
+	}
+	env.Params.Target = strings.TrimSpace(targetView.Buffer())
+
+	pluginView, err := gui.View("Plugins")
+	if err != nil {
+		return err
+	}
+	_, cy := pluginView.Cursor()
+	env.Params.Plugin, err = pluginView.Line(cy)
+	if err != nil {
+		return err
+	}
+
+	resultsView, err := gui.View("Results")
+	if err != nil {
+		return err
+	}
+	resultsView.Clear()
+	fmt.Fprintf(resultsView, "Running '%s' @ '%s'", env.Params.Plugin, env.Params.Target)
+
+	Popup.Active = true
+
 	return nil
 }
 
@@ -31,7 +67,7 @@ func cursorDown(gui *gocui.Gui, view *gocui.View) error {
 	if view != nil {
 		ox, oy := view.Origin()
 		cx, cy := view.Cursor()
-		if cy+1 < NumberPlugins {
+		if cy+1 < plugins.Amount {
 			if err := view.SetCursor(cx, cy+1); err != nil {
 				if err := view.SetOrigin(ox, oy+1); err != nil {
 					return err
@@ -43,12 +79,12 @@ func cursorDown(gui *gocui.Gui, view *gocui.View) error {
 }
 
 func changeView(move int, gui *gocui.Gui, view *gocui.View) error {
-	ActiveView = (ActiveView + move) % (len(Views) - 1)
-	if _, err := setCurrentViewOnTop(gui, Views[ActiveView].name); err != nil {
+	Current = (Current + move) % (len(Views) - 1)
+	if _, err := setCurrentViewOnTop(gui, Views[Current].name); err != nil {
 		return err
 	}
 
-	gui.Cursor = (ActiveView == 0)
+	gui.Cursor = (Current == 0)
 
 	return nil
 }
@@ -68,8 +104,8 @@ func setKeybindings(gui *gocui.Gui) *mrerr.MrRobotError {
 	if err := gui.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, exitApplication); err != nil {
 		return mrerr.NewCritical("Cannot set Ctrl+C keybinding")
 	}
-	if err := gui.SetKeybinding("", gocui.KeyTab, gocui.ModNone, nextView); err != nil {
-		return mrerr.NewCritical("Cannot set TAB keybinding")
+	if err := gui.SetKeybinding("", gocui.KeyEnter, gocui.ModNone, runModule); err != nil {
+		return mrerr.NewCritical("Cannot set Enter keybinding")
 	}
 
 	return nil
