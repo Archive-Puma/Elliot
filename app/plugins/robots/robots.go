@@ -1,8 +1,6 @@
 package robots
 
 import (
-	"github.com/cosasdepuma/elliot/app/cli"
-	"github.com/cosasdepuma/elliot/app/config"
 	"github.com/cosasdepuma/elliot/app/error"
 	"github.com/cosasdepuma/elliot/app/validator"
 
@@ -17,16 +15,12 @@ type Plugin struct{}
 
 // Help TODO: Doc
 func (s Plugin) Help() {
-	config.Args.Print("-extended", "Full links")
-	config.Args.Print("-disallow", "Filter only the disallowed links")
-	config.Args.Print("-u, -url", "Target URL")
+
 }
 
 // Check TODO: Doc
 func (s Plugin) Check() *error.MrRobotError {
-	if validator.IsValidURL(config.Args.URL) {
-		cli.PrintInfo("URL", config.Args.URL)
-	} else {
+	if !validator.IsValidURL(config.Args.URL) {
 		return error.NewWarning("A valid URL should be specified")
 	}
 
