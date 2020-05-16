@@ -12,18 +12,18 @@ import (
 	"strings"
 )
 
-// Subcommand TODO: Doc
-type Subcommand struct{}
+// Plugin TODO: Doc
+type Plugin struct{}
 
 // Help TODO: Doc
-func (s Subcommand) Help() {
+func (s Plugin) Help() {
 	config.Args.Print("-extended", "Full links")
 	config.Args.Print("-disallow", "Filter only the disallowed links")
 	config.Args.Print("-u, -url", "Target URL")
 }
 
 // Check TODO: Doc
-func (s Subcommand) Check() *error.MrRobotError {
+func (s Plugin) Check() *error.MrRobotError {
 	if validator.IsValidURL(config.Args.URL) {
 		cli.PrintInfo("URL", config.Args.URL)
 	} else {
@@ -34,7 +34,7 @@ func (s Subcommand) Check() *error.MrRobotError {
 }
 
 // Run TODO: Doc
-func (s Subcommand) Run() ([]string, []*error.MrRobotError) {
+func (s Plugin) Run() ([]string, []*error.MrRobotError) {
 	errors := make([]*error.MrRobotError, 0)
 
 	path := fmt.Sprintf("%s/robots.txt", config.Args.URL)

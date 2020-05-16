@@ -14,13 +14,41 @@ func disable(_ *gocui.Gui, view *gocui.View) error {
 	return nil
 }
 
+func cursorUp(gui *gocui.Gui, view *gocui.View) error {
+	if view != nil {
+		ox, oy := view.Origin()
+		cx, cy := view.Cursor()
+		if err := view.SetCursor(cx, cy-1); err != nil && oy > 0 {
+			if err := view.SetOrigin(ox, oy-1); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func cursorDown(gui *gocui.Gui, view *gocui.View) error {
+	if view != nil {
+		ox, oy := view.Origin()
+		cx, cy := view.Cursor()
+		if cy+1 < NumberPlugins {
+			if err := view.SetCursor(cx, cy+1); err != nil {
+				if err := view.SetOrigin(ox, oy+1); err != nil {
+					return err
+				}
+			}
+		}
+	}
+	return nil
+}
+
 func changeView(move int, gui *gocui.Gui, view *gocui.View) error {
-	active = (active + move) % (len(views) - 1)
-	if _, err := setCurrentViewOnTop(gui, views[active].name); err != nil {
+	ActiveView = (ActiveView + move) % (len(Views) - 1)
+	if _, err := setCurrentViewOnTop(gui, Views[ActiveView].name); err != nil {
 		return err
 	}
 
-	gui.Cursor = (active == 0)
+	gui.Cursor = (ActiveView == 0)
 
 	return nil
 }

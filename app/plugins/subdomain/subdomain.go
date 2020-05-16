@@ -10,18 +10,18 @@ import (
 	"github.com/cosasdepuma/elliot/app/validator"
 )
 
-// Subcommand TODO: Doc
-type Subcommand struct{}
+// Plugin TODO: Doc
+type Plugin struct{}
 
 type function func(string) ([]string, *error.MrRobotError)
 
 // Help TODO: Doc
-func (s Subcommand) Help() {
+func (s Plugin) Help() {
 	config.Args.Print("-d, -domain", "Target domain")
 }
 
 // Check TODO: Doc
-func (s Subcommand) Check() *error.MrRobotError {
+func (s Plugin) Check() *error.MrRobotError {
 	if validator.IsValidDomain(config.Args.Domain) {
 		cli.PrintInfo("Domain", config.Args.Domain)
 	} else {
@@ -32,7 +32,7 @@ func (s Subcommand) Check() *error.MrRobotError {
 }
 
 // Run TODO: Doc
-func (s Subcommand) Run() ([]string, []*error.MrRobotError) {
+func (s Plugin) Run() ([]string, []*error.MrRobotError) {
 	subdomains := make([]string, 0)
 	errors := []*error.MrRobotError{}
 

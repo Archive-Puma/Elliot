@@ -1,18 +1,10 @@
 package elliot
 
 import (
-	"fmt"
-	"os"
-
-	"github.com/cosasdepuma/elliot/app/cli"
-	"github.com/cosasdepuma/elliot/app/config"
-	"github.com/cosasdepuma/elliot/app/error"
 	"github.com/cosasdepuma/elliot/app/tui"
-
-	"github.com/cosasdepuma/elliot/app/subcommand/portscanner"
-	"github.com/cosasdepuma/elliot/app/subcommand/robots"
-	"github.com/cosasdepuma/elliot/app/subcommand/subdomain"
 )
+
+/*
 
 func startProcess(subcommand Subcommand) {
 	now := cli.StartTime(&config.Args.Subcommand)
@@ -73,16 +65,10 @@ func EntrypointOld() {
 	}
 }
 
+*/
+
 // Entrypoint TODO: Doc
 func Entrypoint() {
-	modules := map[string]Subcommand{
-		"nmap":        portscanner.Subcommand{},
-		"portscanner": portscanner.Subcommand{},
-		"robots":      robots.Subcommand{},
-		"subdomain":   subdomain.Subcommand{},
-	}
-	_ = modules
-
 	if err := tui.ShowTUI(); err != nil {
 		err.Resolve(true)
 	}
