@@ -1,52 +1,28 @@
 package cli
 
 import (
-	"fmt"
-	"time"
+	"github.com/jroimartin/gocui"
 
-	"github.com/cosasdepuma/elliot/app/config"
+	mrerr "github.com/cosasdepuma/elliot/app/error"
 )
 
-// Separator TODO: Doc
-func Separator() {
-	if !config.Args.Bare {
-		fmt.Println("===============================================================")
+// ShowUI TODO: Doc
+func ShowUI() *mrerr.MrRobotError {
+	gui, err := gocui.NewGui(gocui.OutputNormal)
+	if err != nil {
+		return mrerr.NewCritical("Terminal UI cannot be created")
 	}
-}
+	defer gui.Close()
 
-// Banner TODO: Doc
-func Banner() {
-	if !config.Args.Bare {
-		Separator()
-		fmt.Printf("[Ɇ] %s v%s\n", config.Args.ProgramName, config.Args.Version)
-	}
-}
+	gui.SetManagerFunc(mainLayout)
 
-// StartTime TODO: Doc
-func StartTime(process *string) time.Time {
-	now := time.Now()
-	if !config.Args.Bare {
-		Separator()
-		fmt.Printf("[◷] %-8sStarting %s process\n", now.Format(time.Kitchen), *process)
-		Separator()
+	if err := setKeybindings(gui); err != nil {
+		return mrerr.NewCritical("Keybindings cannot be set")
 	}
-	return now
-}
 
-// EndTime TODO: Doc
-func EndTime(start *time.Time) time.Time {
-	now := time.Now()
-	if !config.Args.Bare {
-		Separator()
-		fmt.Printf("[◷] %-8sFinished in %s\n", time.Now().Format(time.Kitchen), time.Since(*start))
-		Separator()
+	if err := gui.MainLoop(); err != nil && err != gocui.ErrQuit {
+		return mrerr.NewCritical("Cannot run Terminal UI")
 	}
-	return now
-}
 
-// PrintInfo TODO: Doc
-func PrintInfo(info string, message string) {
-	if !config.Args.Bare {
-		fmt.Printf("[+] %-10s : %s\n", info, message)
-	}
+	return nil
 }

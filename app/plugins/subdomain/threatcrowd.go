@@ -1,7 +1,7 @@
 package subdomain
 
 import (
-	"github.com/cosasdepuma/elliot/app/error"
+	"errors"
 
 	"encoding/json"
 	"fmt"
@@ -13,30 +13,30 @@ type formatThreatCrowd struct {
 	Subdomains []string `json:"subdomains"`
 }
 
-func fetchThreatCrowd(domain string) ([]string, *error.MrRobotError) {
+func fetchThreatCrowd(domain string) ([]string, error) {
 	// Compose the URL
 	url := fmt.Sprintf("https://www.threatcrowd.org/searchApi/v2/domain/report/?domain=%s", domain)
 	// Request the data
 	resp, err := http.Get(url)
 	if err != nil || resp.StatusCode != 200 {
-		return nil, error.NewWarning("ThreatCrowd is not available")
+		return nil, errors.New("ThreatCrowd is not available")
 	}
 	// Grab the content
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, error.NewWarning("ThreatCrowd does not respond correctly")
+		return nil, errors.New("ThreatCrowd does not respond correctly")
 	}
 	// Parse the JSON
 	subdomains := formatThreatCrowd{}
 	err = json.Unmarshal([]byte(body), &subdomains)
 	if err != nil {
-		return nil, error.NewWarning("Bad JSON format using ThreatCrowd")
+		return nil, errors.New("Bad JSON format using ThreatCrowd")
 	}
 	// Return the JSON
 	return subdomains.Subdomains, nil
 }
 
-func methodThreatCrowd(domain string) ([]string, *error.MrRobotError) {
+func methodThreatCrowd(domain string) ([]string, error) {
 	data, err := fetchThreatCrowd(domain)
 	if err != nil {
 		return nil, err

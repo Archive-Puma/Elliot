@@ -1,40 +1,32 @@
 package subdomain
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 
-	"github.com/cosasdepuma/elliot/app/cli"
-	"github.com/cosasdepuma/elliot/app/config"
-	"github.com/cosasdepuma/elliot/app/error"
+	"github.com/cosasdepuma/elliot/app/env"
 	"github.com/cosasdepuma/elliot/app/validator"
 )
 
-// Subcommand TODO: Doc
-type Subcommand struct{}
+// Plugin TODO: Doc
+type Plugin struct{}
 
-type function func(string) ([]string, *error.MrRobotError)
-
-// Help TODO: Doc
-func (s Subcommand) Help() {
-	config.Args.Print("-d, -domain", "Target domain")
-}
+type function func(string) ([]string, error)
 
 // Check TODO: Doc
-func (s Subcommand) Check() *error.MrRobotError {
-	if validator.IsValidDomain(config.Args.Domain) {
-		cli.PrintInfo("Domain", config.Args.Domain)
-	} else {
-		return error.NewWarning("A valid domain should be specified")
+func (plgn Plugin) Check() error {
+	if !validator.IsValidDomain(env.Params.Target) {
+		return errors.New("A valid domain should be specified")
 	}
 
 	return nil
 }
 
 // Run TODO: Doc
-func (s Subcommand) Run() ([]string, []*error.MrRobotError) {
+// -- Fixme: Can't rerun module
+func (plgn Plugin) Run() {
 	subdomains := make([]string, 0)
-	errors := []*error.MrRobotError{}
 
 	availableMethods := map[string]function{
 		"crtsh":        methodCtrSh,
@@ -42,8 +34,8 @@ func (s Subcommand) Run() ([]string, []*error.MrRobotError) {
 		"threatcrowd":  methodThreatCrowd,
 	}
 
-	nMethods := len(availableMethods)
 	wg := sync.WaitGroup{}
+	nMethods := len(availableMethods)
 	channel := make(chan []string, 0)
 	defer close(channel)
 
@@ -58,18 +50,18 @@ func (s Subcommand) Run() ([]string, []*error.MrRobotError) {
 		subdomains = append(subdomains, <-channel...)
 	}
 
+	result := ""
 	for _, subdomain := range filterDuplicates(subdomains) {
-		fmt.Println(subdomain)
+		result = fmt.Sprintf("%s\n%s", result, subdomain)
 	}
 
-	return subdomains, errors
+	env.Channels.Ok <- result
 }
 
 func concurrentMethod(method function, wg *sync.WaitGroup, channel *chan []string) {
 	defer wg.Done()
-	subdomains, err := method(config.Args.Domain)
+	subdomains, err := method(env.Params.Target)
 	if err != nil {
-		err.Resolve(config.Args.Verbose)
 		*channel <- nil
 	} else {
 		*channel <- subdomains
