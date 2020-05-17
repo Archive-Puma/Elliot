@@ -43,9 +43,17 @@ func runModule(gui *gocui.Gui, _ *gocui.View) error {
 		return err
 	}
 	resultsView.Clear()
-	fmt.Fprintf(resultsView, "Running '%s' @ '%s'", env.Params.Plugin, env.Params.Target)
 
-	Popup.Active = true
+	plugin := plugins.Plugins[env.Params.Plugin]
+	results, err := plugin.Run()
+	if err != nil {
+		Popup.Title = "Error"
+		Popup.Msg = err.Error()
+		Popup.Active = true
+	}
+	for _, result := range results {
+		fmt.Fprintln(resultsView, result)
+	}
 
 	return nil
 }

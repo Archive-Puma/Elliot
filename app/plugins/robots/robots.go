@@ -1,58 +1,55 @@
 package robots
 
 import (
-	"github.com/cosasdepuma/elliot/app/error"
-	"github.com/cosasdepuma/elliot/app/validator"
-
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
+
+	"github.com/cosasdepuma/elliot/app/env"
+	"github.com/cosasdepuma/elliot/app/validator"
 )
 
 // Plugin TODO: Doc
 type Plugin struct{}
 
-// Help TODO: Doc
-func (s Plugin) Help() {
-
-}
-
 // Check TODO: Doc
-func (s Plugin) Check() *error.MrRobotError {
-	if !validator.IsValidURL(config.Args.URL) {
-		return error.NewWarning("A valid URL should be specified")
+func (plgn Plugin) Check() error {
+	if !validator.IsValidURL(env.Params.Target) {
+		return errors.New("A valid URL should be specified")
 	}
 
 	return nil
 }
 
 // Run TODO: Doc
-func (s Plugin) Run() ([]string, []*error.MrRobotError) {
-	errors := make([]*error.MrRobotError, 0)
-
-	path := fmt.Sprintf("%s/robots.txt", config.Args.URL)
-	resp, err := http.Get(path)
-	if err != nil {
-		return nil, append(errors, error.NewWarning("Robots.txt not found"))
+func (plgn Plugin) Run() ([]string, error) {
+	if err := plgn.Check(); err != nil {
+		return nil, err
 	}
 
+	path := fmt.Sprintf("%s/robots.txt", env.Params.Target)
+	resp, err := http.Get(path)
+	if err != nil {
+		return nil, errors.New("Robots.txt not found")
+	}
 	defer resp.Body.Close()
+
 	bRobots, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, append(errors, error.NewWarning("Cannot read robots.txt"))
+		return nil, errors.New("Cannot read robots.txt")
 	}
 
 	results := strings.Split(strings.TrimSpace(string(bRobots)), "\n")
 
-	if config.Args.Disallow {
-		results = filterDisallow(results)
-	}
-	if config.Args.Extended {
-		results = extendedMode(results)
-	}
+	// TODO: Implement disallow only
+	// results = filterDisallow(results)
 
-	return results, errors
+	// TODO: Implement extended
+	// results = extendedMode(results)
+
+	return results, nil
 }
 
 func filterDisallow(robots []string) []string {
@@ -70,7 +67,7 @@ func extendedMode(robots []string) []string {
 	for _, robot := range robots {
 		if strings.HasPrefix(robot, "Allow: ") || strings.HasPrefix(robot, "Disallow: ") || strings.HasPrefix(robot, "/") {
 			splits := strings.SplitN(robot, "/", 2)
-			url := config.Args.URL
+			url := env.Params.Target
 			if !strings.HasSuffix(url, "/") {
 				url = fmt.Sprintf("%s%s", url, "/")
 			}

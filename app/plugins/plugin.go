@@ -1,19 +1,16 @@
 package plugins
 
-import (
-	"github.com/cosasdepuma/elliot/app/error"
-)
+import "github.com/cosasdepuma/elliot/app/plugins/robots"
 
 // Plugins TODO: Doc
 var (
 	Plugins = map[string]interface {
-		Help()
-		Check() *error.MrRobotError
-		Run() ([]string, []*error.MrRobotError)
+		Check() error
+		Run() ([]string, error)
 	}{
 		"portscanner": nil,
 		"subdomain":   nil,
-		"robots":      nil,
+		"robots":      robots.Plugin{},
 	}
 	Amount = len(Plugins)
 )
