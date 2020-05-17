@@ -8,9 +8,9 @@ var (
 		Check() error
 		Run()
 	}{
-		"portscanner": nil,
-		"subdomain":   nil,
-		"robots":      robots.Plugin{},
+		// "portscanner": nil,
+		// "subdomain":   nil,
+		"robots.txt": robots.Plugin{},
 	}
 	Amount = len(Plugins)
 )

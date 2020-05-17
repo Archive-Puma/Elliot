@@ -27,6 +27,10 @@ func runner(gui *gocui.Gui) {
 			}
 			resultsView.Clear()
 			fmt.Fprint(resultsView, result)
+
+			// FIXME: Bug on cursor
+			// -- Despues de mostrar un resultado grande, si se muestra uno pequeño se buguea
+
 			Logger.Type = "Info"
 			Logger.Msg = fmt.Sprintf("Plugin '%s' done.", env.Params.Plugin)
 		case err := <-env.Channels.Bad:
