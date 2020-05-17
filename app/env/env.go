@@ -1,7 +1,19 @@
 package env
 
-// Params TODO: Doc
-var Params = struct {
-	Target string
-	Plugin string
-}{}
+var (
+	// Params TODO: Doc
+	Params = struct {
+		Target string
+		Plugin string
+	}{}
+	// Channels TODO: Doc
+	Channels = struct {
+		Ok   chan string
+		Bad  chan error
+		Done chan struct{}
+	}{
+		Ok:   make(chan string),
+		Bad:  make(chan error),
+		Done: make(chan struct{}),
+	}
+)

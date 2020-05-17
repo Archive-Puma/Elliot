@@ -15,12 +15,6 @@ func exitApplication(_ *gocui.Gui, _ *gocui.View) error {
 	return gocui.ErrQuit
 }
 
-func exitPopup(gui *gocui.Gui, _ *gocui.View) error {
-	Popup.Active = false
-	_, err := setCurrentViewOnTop(gui, Views[Current].name)
-	return err
-}
-
 func runModule(gui *gocui.Gui, _ *gocui.View) error {
 	targetView, err := gui.View("Target")
 	if err != nil {
@@ -38,22 +32,9 @@ func runModule(gui *gocui.Gui, _ *gocui.View) error {
 		return err
 	}
 
-	resultsView, err := gui.View("Results")
-	if err != nil {
-		return err
-	}
-	resultsView.Clear()
-
-	plugin := plugins.Plugins[env.Params.Plugin]
-	results, err := plugin.Run()
-	if err != nil {
-		Popup.Title = "Error"
-		Popup.Msg = err.Error()
-		Popup.Active = true
-	}
-	for _, result := range results {
-		fmt.Fprintln(resultsView, result)
-	}
+	go runner(gui)
+	Logger.Type = "Info"
+	Logger.Msg = fmt.Sprintf("Running %s...", env.Params.Plugin)
 
 	return nil
 }
@@ -87,7 +68,7 @@ func cursorDown(gui *gocui.Gui, view *gocui.View) error {
 }
 
 func changeView(move int, gui *gocui.Gui, view *gocui.View) error {
-	Current = (Current + move) % (len(Views) - 1)
+	Current = (Current + move) % (len(Views) - 2)
 	if _, err := setCurrentViewOnTop(gui, Views[Current].name); err != nil {
 		return err
 	}

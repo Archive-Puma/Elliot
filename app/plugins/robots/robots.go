@@ -24,24 +24,29 @@ func (plgn Plugin) Check() error {
 }
 
 // Run TODO: Doc
-func (plgn Plugin) Run() ([]string, error) {
+func (plgn Plugin) Run() {
 	if err := plgn.Check(); err != nil {
-		return nil, err
+		env.Channels.Bad <- err
+		return
 	}
 
 	path := fmt.Sprintf("%s/robots.txt", env.Params.Target)
 	resp, err := http.Get(path)
 	if err != nil {
-		return nil, errors.New("Robots.txt not found")
+		env.Channels.Bad <- errors.New("Robots.txt not found")
+		// env.Channels.Done <- struct{}{}
+		return
 	}
 	defer resp.Body.Close()
 
 	bRobots, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, errors.New("Cannot read robots.txt")
+		env.Channels.Bad <- errors.New("Cannot read robots.txt")
+		// env.Channels.Done <- struct{}{}
+		return
 	}
 
-	results := strings.Split(strings.TrimSpace(string(bRobots)), "\n")
+	// results := strings.Split(strings.TrimSpace(string(bRobots)), "\n")
 
 	// TODO: Implement disallow only
 	// results = filterDisallow(results)
@@ -49,7 +54,8 @@ func (plgn Plugin) Run() ([]string, error) {
 	// TODO: Implement extended
 	// results = extendedMode(results)
 
-	return results, nil
+	results := strings.TrimSpace(string(bRobots))
+	env.Channels.Ok <- results
 }
 
 func filterDisallow(robots []string) []string {

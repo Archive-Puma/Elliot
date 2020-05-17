@@ -14,7 +14,7 @@ func ShowUI() *mrerr.MrRobotError {
 	}
 	defer gui.Close()
 
-	gui.SetManagerFunc(layoutManager)
+	gui.SetManagerFunc(mainLayout)
 
 	if err := setKeybindings(gui); err != nil {
 		return mrerr.NewCritical("Keybindings cannot be set")

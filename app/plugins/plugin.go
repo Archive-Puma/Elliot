@@ -6,7 +6,7 @@ import "github.com/cosasdepuma/elliot/app/plugins/robots"
 var (
 	Plugins = map[string]interface {
 		Check() error
-		Run() ([]string, error)
+		Run()
 	}{
 		"portscanner": nil,
 		"subdomain":   nil,

@@ -9,31 +9,11 @@ import (
 	plgns "github.com/cosasdepuma/elliot/app/plugins"
 )
 
-func layoutManager(gui *gocui.Gui) error {
-	gui.Highlight = true
-
-	if err := mainLayout(gui); err != nil {
-		return err
-	}
-
-	if Popup.Active {
-		if err := popUpLayout(gui); err != nil {
-			return err
-		}
-		if _, err := setCurrentViewOnTop(gui, "Popup"); err != nil {
-			return err
-		}
-	} else {
-		_ = gui.DeleteView("Popup")
-	}
-
-	return nil
-}
-
 func mainLayout(gui *gocui.Gui) error {
 	width, height := gui.Size()
 
 	gui.Cursor = true
+	gui.Highlight = true
 	gui.SelFgColor = gocui.ColorCyan
 
 	for index, view := range Views {
@@ -102,6 +82,19 @@ func mainLayout(gui *gocui.Gui) error {
 	for _, key := range keys {
 		fmt.Fprintln(plugins, key)
 	}
+	// Display logs
+	logger, err := gui.View(Views[len(Views)-2].name)
+	if err != nil {
+		return err
+	}
+	logger.Clear()
+	switch Logger.Type {
+	case "Error":
+		logger.FgColor = gocui.ColorRed
+	case "Info":
+		logger.FgColor = gocui.ColorDefault
+	}
+	fmt.Fprintf(logger, "%s: %s", Logger.Type, Logger.Msg)
 
 	// Display shortcuts
 	shortcuts, err := gui.View(Views[len(Views)-1].name)
@@ -109,42 +102,11 @@ func mainLayout(gui *gocui.Gui) error {
 		return err
 	}
 	shortcuts.Clear()
-	fmt.Fprint(shortcuts, "Shortcuts: [^C] Exit ")
+	fmt.Fprint(shortcuts, "Shortcuts: [^C] Exit [TAB] Next Frame [Enter] Run ")
 
-	if !Popup.Active {
-		fmt.Fprint(shortcuts, "[TAB] Next Frame [Enter] Run ")
-		// Custom shortcuts
-		if Current == 1 {
-			fmt.Fprint(shortcuts, "[Up|Down] Navigate")
-		}
-	} else {
-		fmt.Fprint(shortcuts, "[Enter] Close dialog")
-	}
-
-	return nil
-}
-
-func popUpLayout(gui *gocui.Gui) error {
-	width, height := gui.Size()
-
-	gui.Cursor = false
-	gui.SelFgColor = gocui.ColorRed
-
-	x, y := (width/2)-(len(Popup.Msg)/2)-3, (height/2)-1
-	w, h := (width/2)+(len(Popup.Msg)/2)+1, (height/2)+1
-
-	// Create the view
-	if popup, err := gui.SetView("Popup", x, y, w, h); err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
-		}
-
-		popup.Title = Popup.Title
-		fmt.Fprintf(popup, " %s ", Popup.Msg)
-
-		if err := gui.SetKeybinding("Popup", gocui.KeyEnter, gocui.ModNone, exitPopup); err != nil {
-			return err
-		}
+	// Custom shortcuts
+	if Current == 1 {
+		fmt.Fprint(shortcuts, "[Up|Down] Navigate")
 	}
 
 	return nil
