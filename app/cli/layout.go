@@ -99,7 +99,7 @@ func createView(gui *gocui.Gui, view *gocui.View, name string, hasFrame bool, is
 }
 
 func mainLayout(gui *gocui.Gui) error {
-	w, h := gui.Size()
+	width, height := gui.Size()
 
 	gui.Cursor = true
 	gui.Highlight = true
@@ -107,7 +107,7 @@ func mainLayout(gui *gocui.Gui) error {
 
 	for index, view := range Views {
 		// Calculate position
-		x, y, w, h := calculatePosition(w, h, view.x, view.y, view.w, view.h)
+		x, y, w, h := calculatePosition(width, height, view.x, view.y, view.w, view.h)
 		// Create the view
 		if panel, err := gui.SetView(view.name, x, y, w, h); err != nil {
 			if err != gocui.ErrUnknownView {
