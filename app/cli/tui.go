@@ -1,27 +1,25 @@
 package cli
 
 import (
-	"github.com/jroimartin/gocui"
-
-	mrerr "github.com/cosasdepuma/elliot/app/error"
+	"github.com/awesome-gocui/gocui"
 )
 
 // ShowUI TODO: Doc
-func ShowUI() *mrerr.MrRobotError {
-	gui, err := gocui.NewGui(gocui.OutputNormal)
+func ShowUI() error {
+	gui, err := gocui.NewGui(gocui.OutputNormal, false)
 	if err != nil {
-		return mrerr.NewCritical("Terminal UI cannot be created")
+		return err
 	}
 	defer gui.Close()
 
 	gui.SetManagerFunc(mainLayout)
 
 	if err := setKeybindings(gui); err != nil {
-		return mrerr.NewCritical("Keybindings cannot be set")
+		return err
 	}
 
 	if err := gui.MainLoop(); err != nil && err != gocui.ErrQuit {
-		return mrerr.NewCritical("Cannot run Terminal UI")
+		return err
 	}
 
 	return nil

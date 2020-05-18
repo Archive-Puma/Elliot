@@ -2,10 +2,12 @@ package cli
 
 import (
 	"fmt"
+	"strings"
+
+	"github.com/awesome-gocui/gocui"
 
 	"github.com/cosasdepuma/elliot/app/env"
 	"github.com/cosasdepuma/elliot/app/plugins"
-	"github.com/jroimartin/gocui"
 )
 
 func runner(gui *gocui.Gui) {
@@ -26,7 +28,9 @@ func runner(gui *gocui.Gui) {
 				return err
 			}
 			resultsView.Clear()
-			fmt.Fprint(resultsView, result)
+			resultsView.SetOrigin(0, 0)
+			resultsView.SetCursor(0, 0)
+			fmt.Fprint(resultsView, strings.TrimSpace(result))
 
 			// FIXME: Bug on cursor
 			// -- Despues de mostrar un resultado grande, si se muestra uno pequeño se buguea

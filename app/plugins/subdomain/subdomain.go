@@ -52,7 +52,9 @@ func (plgn Plugin) Run() {
 
 	result := ""
 	for _, subdomain := range filterDuplicates(subdomains) {
-		result = fmt.Sprintf("%s\n%s", result, subdomain)
+		if len(subdomain) > 0 && subdomain != "error check your search parameter" {
+			result = fmt.Sprintf("%s%s\n", result, subdomain)
+		}
 	}
 
 	env.Channels.Ok <- result

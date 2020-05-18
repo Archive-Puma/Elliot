@@ -1,11 +1,15 @@
 package elliot
 
-import "github.com/cosasdepuma/elliot/app/cli"
+import (
+	"fmt"
+
+	"github.com/cosasdepuma/elliot/app/cli"
+)
 
 // Entrypoint TODO: Doc
 func Entrypoint() {
 	if err := cli.ShowUI(); err != nil {
-		err.Resolve(true)
+		fmt.Printf("[!] %s\n", err.Error())
 	}
 }
 

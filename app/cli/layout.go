@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/jroimartin/gocui"
+	"github.com/awesome-gocui/gocui"
 
 	"github.com/cosasdepuma/elliot/app/plugins"
 )
@@ -61,11 +61,11 @@ func calculatePosition(width int, height int, x int, y int, w int, h int) (int, 
 	if x < -1 {
 		x = width + x
 	}
-	if y < -1 {
-		y = height + y
-	}
 	if w <= 0 {
 		w = width + w
+	}
+	if y < -1 {
+		y = height + y
 	}
 	if h <= 0 {
 		h = height + h
@@ -77,7 +77,7 @@ func createView(gui *gocui.Gui, view *gocui.View, name string, hasFrame bool, is
 	view.Wrap = true
 	view.Title = name
 	view.Frame = hasFrame
-	view.Editable = isList
+	view.Editable = isEditable
 
 	if err := gui.SetKeybinding(name, gocui.KeyTab, gocui.ModNone, nextView); err != nil {
 		return err
@@ -109,8 +109,8 @@ func mainLayout(gui *gocui.Gui) error {
 		// Calculate position
 		x, y, w, h := calculatePosition(width, height, view.x, view.y, view.w, view.h)
 		// Create the view
-		if panel, err := gui.SetView(view.name, x, y, w, h); err != nil {
-			if err != gocui.ErrUnknownView {
+		if panel, err := gui.SetView(view.name, x, y, w, h, 1); err != nil {
+			if !gocui.IsUnknownView(err) {
 				return err
 			}
 			if err := createView(gui, panel, view.name, view.frame, view.editable, view.list); err != nil {

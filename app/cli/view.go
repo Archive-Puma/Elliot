@@ -16,6 +16,7 @@ var (
 	Views = [...]struct {
 		name       string
 		x, y, w, h int
+		middle     bool
 		editable   bool
 		list       bool
 		frame      bool

@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jroimartin/gocui"
+	"github.com/awesome-gocui/gocui"
 
 	"github.com/cosasdepuma/elliot/app/env"
-	mrerr "github.com/cosasdepuma/elliot/app/error"
 	"github.com/cosasdepuma/elliot/app/plugins"
 )
 
@@ -89,12 +88,12 @@ func setCurrentViewOnTop(gui *gocui.Gui, name string) (*gocui.View, error) {
 	return gui.SetViewOnTop(name)
 }
 
-func setKeybindings(gui *gocui.Gui) *mrerr.MrRobotError {
+func setKeybindings(gui *gocui.Gui) error {
 	if err := gui.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, exitApplication); err != nil {
-		return mrerr.NewCritical("Cannot set Ctrl+C keybinding")
+		return err
 	}
 	if err := gui.SetKeybinding("", gocui.KeyEnter, gocui.ModNone, runModule); err != nil {
-		return mrerr.NewCritical("Cannot set Enter keybinding")
+		return err
 	}
 
 	return nil
