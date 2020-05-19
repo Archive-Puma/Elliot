@@ -26,24 +26,8 @@ func displayPlugins(gui *gocui.Gui) error {
 	return nil
 }
 
-func displayLogger(gui *gocui.Gui) error {
-	loggerView, err := gui.View(Views[len(Views)-2].name)
-	if err != nil {
-		return err
-	}
-	loggerView.Clear()
-	switch Logger.Type {
-	case "Error":
-		loggerView.FgColor = gocui.ColorRed
-	case "Info":
-		loggerView.FgColor = gocui.ColorDefault
-	}
-	fmt.Fprintf(loggerView, "%s: %s", Logger.Type, Logger.Msg)
-	return nil
-}
-
 func displayShortcuts(gui *gocui.Gui) error {
-	shortcutsView, err := gui.View(Views[len(Views)-1].name)
+	shortcutsView, err := gui.View(MainViews[len(MainViews)-1].name)
 	if err != nil {
 		return err
 	}
@@ -57,23 +41,7 @@ func displayShortcuts(gui *gocui.Gui) error {
 	return nil
 }
 
-func calculatePosition(width int, height int, x int, y int, w int, h int) (int, int, int, int) {
-	if x < -1 {
-		x = width + x
-	}
-	if w <= 0 {
-		w = width + w
-	}
-	if y < -1 {
-		y = height + y
-	}
-	if h <= 0 {
-		h = height + h
-	}
-	return x, y, w, h
-}
-
-func createView(gui *gocui.Gui, view *gocui.View, name string, hasFrame bool, isEditable bool, isList bool) error {
+func configureView(gui *gocui.Gui, view *gocui.View, name string, hasFrame bool, isEditable bool, isList bool) error {
 	view.Wrap = true
 	view.Title = name
 	view.Frame = hasFrame
@@ -105,15 +73,16 @@ func mainLayout(gui *gocui.Gui) error {
 	gui.Highlight = true
 	gui.SelFgColor = gocui.ColorCyan
 
+	Views := MainViews
 	for index, view := range Views {
 		// Calculate position
-		x, y, w, h := calculatePosition(width, height, view.x, view.y, view.w, view.h)
+		x, y, w, h := calculatePosition(width, height, view)
 		// Create the view
 		if panel, err := gui.SetView(view.name, x, y, w, h, 1); err != nil {
 			if !gocui.IsUnknownView(err) {
 				return err
 			}
-			if err := createView(gui, panel, view.name, view.frame, view.editable, view.list); err != nil {
+			if err := configureView(gui, panel, view.name, view.frame, view.editable, view.list); err != nil {
 				return err
 			}
 		}
@@ -124,6 +93,7 @@ func mainLayout(gui *gocui.Gui) error {
 			}
 		}
 	}
+
 	// Display the plugins
 	if err := displayPlugins(gui); err != nil {
 		return err
@@ -132,8 +102,13 @@ func mainLayout(gui *gocui.Gui) error {
 	if err := displayLogger(gui); err != nil {
 		return err
 	}
+
 	// Display the shortcuts
 	if err := displayShortcuts(gui); err != nil {
+		return err
+	}
+
+	if err := displayModal(gui); err != nil {
 		return err
 	}
 

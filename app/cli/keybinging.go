@@ -31,9 +31,23 @@ func runModule(gui *gocui.Gui, _ *gocui.View) error {
 		return err
 	}
 
-	go runner(gui)
-	Logger.Type = "Info"
-	Logger.Msg = fmt.Sprintf("Running %s...", env.Params.Plugin)
+	if len(env.Params.Arguments) > 0 && env.Params.Arguments[0] == "" {
+		env.Params.Arguments = nil
+	}
+	if env.Params.Arguments == nil {
+		switch env.Params.Plugin {
+		case "portscanner":
+			Modal.Active = true
+			Modal.Current = "Ports"
+		default:
+			env.Params.Arguments = []interface{}{true}
+		}
+	}
+	if env.Params.Arguments != nil {
+		go runner(gui)
+		Logger.Type = "Info"
+		Logger.Msg = fmt.Sprintf("Running %s...", env.Params.Plugin)
+	}
 
 	return nil
 }
@@ -67,6 +81,7 @@ func cursorDown(gui *gocui.Gui, view *gocui.View) error {
 }
 
 func changeView(move int, gui *gocui.Gui, view *gocui.View) error {
+	Views := MainViews
 	Current = (Current + move) % (len(Views) - 2)
 	if _, err := setCurrentViewOnTop(gui, Views[Current].name); err != nil {
 		return err

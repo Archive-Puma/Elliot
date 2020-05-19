@@ -3,8 +3,9 @@ package env
 var (
 	// Params TODO: Doc
 	Params = struct {
-		Target string
-		Plugin string
+		Target    string
+		Plugin    string
+		Arguments []interface{}
 	}{}
 	// Channels TODO: Doc
 	Channels = struct {

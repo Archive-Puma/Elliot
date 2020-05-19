@@ -1,6 +1,7 @@
 package plugins
 
 import (
+	"github.com/cosasdepuma/elliot/app/plugins/portscanner"
 	"github.com/cosasdepuma/elliot/app/plugins/robots"
 	"github.com/cosasdepuma/elliot/app/plugins/subdomain"
 )
@@ -11,9 +12,9 @@ var (
 		Check() error
 		Run()
 	}{
-		// "portscanner": nil,
-		"subdomain":  subdomain.Plugin{},
-		"robots.txt": robots.Plugin{},
+		"portscanner": portscanner.Plugin{},
+		"subdomain":   subdomain.Plugin{},
+		"robots.txt":  robots.Plugin{},
 	}
 	Amount = len(Plugins)
 )
