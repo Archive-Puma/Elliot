@@ -63,7 +63,7 @@ func ParsePorts(rawPorts string) ([]int, bool) {
 	}
 
 	keys := make([]int, 0)
-	for k := range keys {
+	for k := range ports {
 		keys = append(keys, k)
 	}
 

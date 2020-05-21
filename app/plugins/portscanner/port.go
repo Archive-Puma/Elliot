@@ -1,6 +1,9 @@
 package portscanner
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 // Port TODO: Doc
 type Port struct {
@@ -31,7 +34,7 @@ func (port Port) IsOpen() bool {
 }
 
 func (port Port) String() string {
-	return fmt.Sprintf("%5d/%s\t%-7s\t%-9s\t%s", port.number, port.protocol, port.status, port.service, port.banner)
+	return fmt.Sprintf("%5d/%s\t%-7s\t%-9s\t%s", port.number, port.protocol, port.status, port.service, strings.TrimSpace(port.banner))
 }
 
 func (port *Port) predictService() {

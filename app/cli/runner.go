@@ -46,6 +46,10 @@ func (app *App) getParams() error {
 func (app *App) runPlugin() {
 	go func(app *App) {
 		<-env.Channels.Start
+
+		app.logLevel = LOGINFO
+		app.logMsg = fmt.Sprintf("Running %s...", app.pluginName)
+		app.cleanSignals()
 		go app.runner()
 		// app.startLoader
 		select {
@@ -59,7 +63,7 @@ func (app *App) runPlugin() {
 				view.Clear()
 				view.SetOrigin(0, 0)
 				view.SetCursor(0, 0)
-				fmt.Fprintf(view, "%s\n\n\n", results)
+				fmt.Fprint(view, results)
 			}
 		}
 		// app.stopLoader
@@ -79,8 +83,6 @@ func (app *App) runner() {
 		app.runningInstances++
 		app.lock.Unlock()
 
-		app.logLevel = LOGINFO
-		app.logMsg = fmt.Sprintf("Running %s...", app.pluginName)
 		plugin.Run()
 
 		app.lock.Lock()
