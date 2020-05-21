@@ -4,23 +4,22 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/cosasdepuma/elliot/app/cli"
 	"github.com/sirupsen/logrus"
-
-	"github.com/cosasdepuma/elliot/app/gui"
 )
 
 // Entrypoint TODO: Doc
 func Entrypoint() {
+	logrus.SetLevel(logrus.DebugLevel)
 	logs, err := os.OpenFile("elliot.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
-		fmt.Println("[!] Error creating logs")
-		return
+		logs, _ = os.Open(os.DevNull)
+		logrus.SetLevel(logrus.PanicLevel)
 	}
 	defer logs.Close()
 	logrus.SetOutput(logs)
-	logrus.SetLevel(logrus.DebugLevel)
 
-	app, err := gui.NewApp(logs)
+	app, err := cli.NewApp()
 	if err != nil {
 		fmt.Printf("[!] %s\n", err.Error())
 		return

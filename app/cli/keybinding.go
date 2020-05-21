@@ -1,4 +1,4 @@
-package gui
+package cli
 
 import (
 	"github.com/awesome-gocui/gocui"

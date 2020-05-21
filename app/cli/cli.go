@@ -1,7 +1,6 @@
-package gui
+package cli
 
 import (
-	"os"
 	"time"
 
 	"github.com/awesome-gocui/gocui"
@@ -39,7 +38,7 @@ type App struct {
 }
 
 // NewApp TODO: Doc
-func NewApp(logs *os.File) (*App, error) {
+func NewApp() (*App, error) {
 	gui, err := gocui.NewGui(gocui.OutputNormal, false)
 	if err != nil {
 		return nil, err
