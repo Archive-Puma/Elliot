@@ -5,112 +5,172 @@ import (
 	"sort"
 
 	"github.com/awesome-gocui/gocui"
-
 	"github.com/cosasdepuma/elliot/app/plugins"
+	"github.com/sirupsen/logrus"
 )
 
-func displayPlugins(gui *gocui.Gui) error {
-	pluginView, err := gui.View("Plugins")
+type coordinates struct {
+	x, y, w, h int
+}
+
+type sView struct {
+	name     string
+	coords   coordinates
+	editable bool
+	list     bool
+	frame    bool
+}
+
+func (app *App) calculatePosition(indexMainView int) coordinates {
+	view := app.mainViews[indexMainView]
+	coords := coordinates{}
+	// X
+	coords.x = view.coords.x
+	if coords.x < -1 {
+		coords.x = app.dimensions.width + coords.x
+	}
+	// Y
+	coords.y = view.coords.y
+	if coords.y < -1 {
+		coords.y = app.dimensions.height + coords.y
+	}
+	// W
+	coords.w = view.coords.w
+	if coords.w <= 0 {
+		coords.w = app.dimensions.width + coords.w
+	}
+	// H
+	coords.h = view.coords.h
+	if coords.h <= 0 {
+		coords.h = app.dimensions.height + coords.h
+	}
+	return coords
+}
+
+func (app *App) drawMainViews() error {
+	for index, view := range app.mainViews {
+		position := app.calculatePosition(index)
+		if panel, err := app.gui.SetView(view.name, position.x, position.y, position.w, position.h, 0); err != nil {
+			if !gocui.IsUnknownView(err) {
+				return err
+			}
+			panel.Wrap = true
+			panel.Title = view.name
+			panel.Frame = view.frame
+			panel.Editable = view.editable
+
+			if view.list {
+				panel.Highlight = true
+				panel.SelBgColor = gocui.ColorWhite
+				panel.SelFgColor = gocui.ColorBlack
+			}
+		}
+	}
+	return nil
+}
+
+func (app *App) drawModalViews() error {
+	for _, modal := range app.modalViews {
+		if panel, err := app.gui.SetView(modal.name, modal.coords.x, modal.coords.y, modal.coords.w, modal.coords.h, 0); err != nil {
+			if !gocui.IsUnknownView(err) {
+				return err
+			}
+			panel.Wrap = true
+			panel.Title = modal.name
+			panel.Frame = true
+			panel.Editable = modal.editable
+		}
+	}
+	return nil
+}
+
+func (app *App) displayPlugins() error {
+	view, err := app.gui.View("Plugins")
 	if err != nil {
 		return err
 	}
-	pluginView.Clear()
+	view.Clear()
 	keys := make([]string, 0)
 	for key := range plugins.Plugins {
 		keys = append(keys, key)
 	}
 	sort.Strings(keys)
-	for _, key := range keys {
-		fmt.Fprintln(pluginView, key)
+	for index, key := range keys {
+		selector := " "
+		if index == app.currentPlugin {
+			selector = ">"
+		}
+		fmt.Fprintf(view, "%s%s\n", selector, key)
 	}
 	return nil
 }
 
-func displayShortcuts(gui *gocui.Gui) error {
-	shortcutsView, err := gui.View(MainViews[len(MainViews)-1].name)
+func (app *App) displayLogger() error {
+	view, err := app.gui.View("Logger")
 	if err != nil {
 		return err
 	}
-	shortcutsView.Clear()
-	fmt.Fprint(shortcutsView, "Shortcuts: [^C] Exit [TAB] Next Frame [Enter] Run ")
+	view.Clear()
+	switch app.logLevel {
+	case LOGINFO:
+		view.FgColor = gocui.ColorDefault
+	case LOGERROR:
+		view.FgColor = gocui.ColorRed
+	}
+	fmt.Fprintf(view, "Ɇlliot: %s", app.logMsg)
+	return nil
+}
 
-	// Custom shortcuts
-	if Current == 1 {
-		fmt.Fprint(shortcutsView, "[Up|Down] Navigate")
+func (app *App) displayShortcuts() error {
+	view, err := app.gui.View("─")
+	if err != nil {
+		return err
+	}
+	view.Clear()
+	fmt.Fprint(view, "Shortcuts: [^C] Exit ")
+
+	if app.currentView == -1 {
+		fmt.Fprint(view, "[Esc] Close ")
+	} else {
+		fmt.Fprint(view, "[TAB] Next Frame ")
+	}
+	fmt.Fprint(view, "[Enter] Run ")
+
+	switch app.currentView {
+	case 1:
+		fmt.Fprint(view, "[Up|Down] Navigate")
 	}
 	return nil
 }
 
-func configureView(gui *gocui.Gui, view *gocui.View, name string, hasFrame bool, isEditable bool, isList bool) error {
-	view.Wrap = true
-	view.Title = name
-	view.Frame = hasFrame
-	view.Editable = isEditable
-
-	if err := gui.SetKeybinding(name, gocui.KeyTab, gocui.ModNone, nextView); err != nil {
+func (app *App) layout(gui *gocui.Gui) error {
+	app.dimensions.width, app.dimensions.height = gui.Size()
+	if err := app.drawMainViews(); err != nil {
+		return err
+	}
+	if err := app.drawModalViews(); err != nil {
 		return err
 	}
 
-	if isList {
-		view.Highlight = true
-		view.SelBgColor = gocui.ColorWhite
-		view.SelFgColor = gocui.ColorBlack
+	if err := app.displayPlugins(); err != nil {
+		return err
+	}
+	if err := app.displayLogger(); err != nil {
+		return err
+	}
+	if err := app.displayShortcuts(); err != nil {
+		return err
+	}
 
-		if err := gui.SetKeybinding(name, gocui.KeyArrowUp, gocui.ModNone, cursorUp); err != nil {
+	if app.currentModal != "" {
+		if err := app.showModal(app.currentModal); err != nil {
 			return err
 		}
-		if err := gui.SetKeybinding(name, gocui.KeyArrowDown, gocui.ModNone, cursorDown); err != nil {
-			return err
-		}
 	}
-	return nil
-}
-
-func mainLayout(gui *gocui.Gui) error {
-	width, height := gui.Size()
-
-	gui.Cursor = true
-	gui.Highlight = true
-	gui.SelFgColor = gocui.ColorCyan
-
-	Views := MainViews
-	for index, view := range Views {
-		// Calculate position
-		x, y, w, h := calculatePosition(width, height, view)
-		// Create the view
-		if panel, err := gui.SetView(view.name, x, y, w, h, 1); err != nil {
-			if !gocui.IsUnknownView(err) {
-				return err
-			}
-			if err := configureView(gui, panel, view.name, view.frame, view.editable, view.list); err != nil {
-				return err
-			}
-		}
-		// Set the current view on top
-		if index == Current {
-			if _, err := setCurrentViewOnTop(gui, view.name); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Display the plugins
-	if err := displayPlugins(gui); err != nil {
-		return err
-	}
-	// Display the logger
-	if err := displayLogger(gui); err != nil {
+	if err := app.setFocus(); err != nil {
 		return err
 	}
 
-	// Display the shortcuts
-	if err := displayShortcuts(gui); err != nil {
-		return err
-	}
-
-	if err := displayModal(gui); err != nil {
-		return err
-	}
-
+	logrus.Debug("User Interface refreshed")
 	return nil
 }

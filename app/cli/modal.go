@@ -1,75 +1,46 @@
 package cli
 
 import (
-	"fmt"
+	"errors"
+	"strings"
 
-	"github.com/awesome-gocui/gocui"
-	"github.com/cosasdepuma/elliot/app/env"
+	"github.com/sirupsen/logrus"
 )
 
-// Modal TODO: Doc
-var Modal = struct {
-	Active  bool
-	Current string
-}{}
-
-func displayModal(gui *gocui.Gui) error {
-	if Modal.Active {
-		w, h := gui.Size()
-
-		env.Params.Arguments = nil
-		modal := ModalViews[Modal.Current]
-		if popup, err := gui.SetView("Modal", w/3, (h/2)-1, 2*w/3, h/2+1, 0); err != nil {
-			if !gocui.IsUnknownView(err) {
-				return err
-			}
-			popup.Clear()
-			popup.Wrap = true
-			popup.Title = modal.name
-			popup.Frame = true
-			popup.Editable = modal.input
-
-			if Current >= 0 {
-				Current -= len(MainViews)
-			}
-			if _, err := setCurrentViewOnTop(gui, "Modal"); err != nil {
-				return err
-			}
-
-			if err := gui.SetKeybinding("Modal", gocui.KeyEnter, gocui.ModNone, modalHandler); err != nil {
-				return err
-			}
-		}
+func (app *App) showModal(name string) error {
+	logrus.Debug("Modal shown")
+	modal, ok := app.modalViews[name]
+	if !ok {
+		return errors.New("Modal not found")
 	}
-
-	return nil
+	app.Params = nil
+	app.currentModal = name
+	if app.currentView != -1 {
+		app.lastView = app.currentView
+	}
+	app.currentView = -1
+	_, err := app.gui.SetView(name, app.dimensions.width/2+modal.coords.x, app.dimensions.height/2+modal.coords.y, app.dimensions.width/2+(-1*modal.coords.w+2), app.dimensions.height/2+modal.coords.h, 0)
+	return err
 }
 
-func disableModal(gui *gocui.Gui) error {
-	gui.DeleteView("Modal")
-	Modal.Active = false
-	if Current < 0 {
-		Current += len(MainViews)
+func (app *App) closeModal() error {
+	logrus.Debug("Modal closed")
+	modal, ok := app.modalViews[app.currentModal]
+	if !ok {
+		return errors.New("Modal not found")
 	}
-	return nil
-}
-
-func modalHandler(gui *gocui.Gui, view *gocui.View) error {
-	modalView, err := gui.View("Modal")
+	view, err := app.gui.View(app.currentModal)
 	if err != nil {
 		return err
 	}
+	app.currentView = app.lastView
+	app.Params = strings.TrimSpace(view.Buffer())
+	_, err = app.gui.SetView(app.currentModal, modal.coords.x, modal.coords.y, modal.coords.w, modal.coords.h, 0)
+	app.currentModal = ""
+	return err
+}
 
-	if ModalViews[Modal.Current].input {
-		content := modalView.Buffer()
-		if len(content) == 0 {
-			disableModal(gui)
-			return nil
-		}
-		env.Params.Arguments = []interface{}{content}
-	}
-	fmt.Println("Params", env.Params.Arguments)
-	disableModal(gui)
-	runModule(gui, view)
-	return nil
+func (app *App) isModal(name string) bool {
+	_, ok := app.modalViews[name]
+	return ok
 }
