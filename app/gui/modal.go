@@ -25,7 +25,6 @@ func (app *App) showModal(name string) error {
 
 func (app *App) closeModal() error {
 	logrus.Debug("Modal closed")
-	logrus.Warning(app.lastView, app.currentView)
 	modal, ok := app.modalViews[app.currentModal]
 	if !ok {
 		return errors.New("Modal not found")

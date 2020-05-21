@@ -51,6 +51,5 @@ func (app *App) onFocusChange() error {
 	for _, view := range app.gui.Views() {
 		view.Highlight = view == current
 	}
-	logrus.Debug("Focus changed")
 	return nil
 }

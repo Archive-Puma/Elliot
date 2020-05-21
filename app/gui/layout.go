@@ -66,7 +66,6 @@ func (app *App) drawMainViews() error {
 			}
 		}
 	}
-	logrus.Debug("Main views drawn")
 	return nil
 }
 
@@ -82,7 +81,6 @@ func (app *App) drawModalViews() error {
 			panel.Editable = modal.editable
 		}
 	}
-	logrus.Debug("Modal views drawn")
 	return nil
 }
 
@@ -98,12 +96,28 @@ func (app *App) displayPlugins() error {
 	}
 	sort.Strings(keys)
 	for index, key := range keys {
-		selector := ""
+		selector := " "
 		if index == app.currentPlugin {
 			selector = ">"
 		}
 		fmt.Fprintf(view, "%s%s\n", selector, key)
 	}
+	return nil
+}
+
+func (app *App) displayLogger() error {
+	view, err := app.gui.View("Logger")
+	if err != nil {
+		return err
+	}
+	view.Clear()
+	switch app.logLevel {
+	case LOGINFO:
+		view.FgColor = gocui.ColorDefault
+	case LOGERROR:
+		view.FgColor = gocui.ColorRed
+	}
+	fmt.Fprintf(view, "Ɇlliot: %s", app.logMsg)
 	return nil
 }
 
@@ -119,6 +133,9 @@ func (app *App) layout(gui *gocui.Gui) error {
 	if err := app.displayPlugins(); err != nil {
 		return err
 	}
+	if err := app.displayLogger(); err != nil {
+		return err
+	}
 
 	if app.currentModal != "" {
 		if err := app.showModal(app.currentModal); err != nil {
@@ -129,5 +146,6 @@ func (app *App) layout(gui *gocui.Gui) error {
 		return err
 	}
 
+	logrus.Debug("User Interface refreshed")
 	return nil
 }

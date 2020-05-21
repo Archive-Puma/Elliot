@@ -8,10 +8,18 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	// LOGINFO TODO: Doc
+	LOGINFO = iota
+	// LOGERROR TODO Doc
+	LOGERROR
+)
+
 // App TODO: Doc
 type App struct {
 	gui           *gocui.Gui
-	logs          *os.File
+	logMsg        string
+	logLevel      int
 	mainViews     []sView
 	modalViews    map[string]sView
 	keybindings   []sKeybinding
@@ -38,7 +46,8 @@ func NewApp(logs *os.File) (*App, error) {
 	}
 	return &App{
 		gui:           gui,
-		logs:          logs,
+		logMsg:        "",
+		logLevel:      LOGINFO,
 		lastView:      0,
 		currentView:   0,
 		currentPlugin: 0,
@@ -46,14 +55,14 @@ func NewApp(logs *os.File) (*App, error) {
 			{name: "Target", coords: coordinates{0, 0, -1, 2}, frame: true, editable: true},
 			{name: "Plugins", coords: coordinates{0, 3, 18, -4}, frame: true, list: true},
 			{name: "Results", coords: coordinates{19, 3, -1, -4}, frame: true, editable: true},
-			{name: "Messages", coords: coordinates{-1, -4, 0, -2}},
+			{name: "Logger", coords: coordinates{-1, -4, 0, -2}},
 			{name: "─", coords: coordinates{-1, -2, 0, 0}, frame: true},
 		},
 		modalViews: map[string]sView{
 			"Ports": {name: "Ports", coords: coordinates{-20, -1, -18, 1}, editable: true},
 		},
 		Params:       nil,
-		currentModal: "Ports",
+		currentModal: "",
 	}, nil
 }
 
