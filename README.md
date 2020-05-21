@@ -32,7 +32,7 @@ docker pull cosasdepuma/elliot:latest
 The recommended way to run the image is:
 
 ```
-docker run --rm -v $PWD:/output cosasdepuma/elliot [subcommand] -out-dir=/output <args...>
+docker run --rm -it cosasdepuma/elliot
 ```
 
 🔩 Develop
@@ -47,12 +47,12 @@ git clone https://github.com/cosasdepuma/Elliot
 
 Once downloaded, do not hesitate to modify everything you think necessary.
 
-You should take a look at the [TODO](./TODO.md) and [Roadmap](ROADMAP.md) files to get an idea of what needs to be done.
+You should take a look at the [TODO](./TODO.md) and [Roadmap](./ROADMAP.md) files to get an idea of what needs to be done.
 
 🔧 Compile
 ---
 
-Compiling is Golang is extremely easy. Just run the command:
+Compiling Elliot is extremely easy. Just run the command:
 
 ```go
 go build -o elliot main.go

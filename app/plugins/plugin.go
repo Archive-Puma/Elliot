@@ -16,5 +16,8 @@ var (
 		"subdomain":   subdomain.Plugin{},
 		"robots.txt":  robots.Plugin{},
 	}
+	Required = map[string]string{
+		"portscanner": "Ports",
+	}
 	Amount = len(Plugins)
 )

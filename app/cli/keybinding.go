@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"fmt"
+
 	"github.com/awesome-gocui/gocui"
 	"github.com/sirupsen/logrus"
 
@@ -19,6 +21,9 @@ func (app *App) setKeybindings() error {
 		{"", gocui.KeyTab, app.keybindingNextView},
 		{"Target", gocui.KeyArrowUp, app.keybindingDisabled},
 		{"Target", gocui.KeyArrowDown, app.keybindingDisabled},
+		{"Target", gocui.KeyEnter, app.keybindingRun},
+		{"Plugins", gocui.KeyEnter, app.keybindingRun},
+		{"Results", gocui.KeyEnter, app.keybindingRun},
 		{"Plugins", gocui.KeyArrowUp, app.keybindingPreviousPlugin},
 		{"Plugins", gocui.KeyArrowDown, app.keybindingNextPlugin},
 	}
@@ -79,6 +84,15 @@ func (app *App) keybindingNextPlugin(gui *gocui.Gui, view *gocui.View) error {
 		}
 	}
 	_, app.currentPlugin = view.Cursor()
+	return nil
+}
+
+func (app *App) keybindingRun(gui *gocui.Gui, view *gocui.View) error {
+	if err := app.getPluginFocused(); err != nil {
+		return err
+	}
+	app.logLevel = LOGINFO
+	app.logMsg = fmt.Sprintf("Running %s...", app.pluginName)
 	return nil
 }
 

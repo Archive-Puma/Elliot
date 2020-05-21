@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"strings"
+
 	"github.com/awesome-gocui/gocui"
 	"github.com/sirupsen/logrus"
 )
@@ -21,6 +23,21 @@ func (app *App) getFocusLayout() func(gui *gocui.Gui) error {
 		}
 		return nil
 	}
+}
+
+func (app *App) getPluginFocused() error {
+	view, err := app.gui.View("Plugins")
+	if err != nil {
+		return err
+	}
+	_, cy := view.Cursor()
+	plugin, err := view.Line(cy)
+	if err != nil {
+		return err
+	}
+	app.pluginName = strings.TrimPrefix(plugin, ">")
+	logrus.Info("Selected plugin: ", app.pluginName)
+	return nil
 }
 
 func (app *App) setFocus() error {

@@ -23,6 +23,7 @@ type App struct {
 	modalViews    map[string]sView
 	keybindings   []sKeybinding
 	currentPlugin int
+	pluginName    string
 	currentModal  string
 	currentView   int
 	lastView      int
