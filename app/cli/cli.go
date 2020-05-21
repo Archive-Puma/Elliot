@@ -11,13 +11,13 @@ import (
 )
 
 const (
-	// LOGINFO TODO: Doc
+	// LOGINFO displays no colored messages
 	LOGINFO = iota
-	// LOGERROR TODO Doc
+	// LOGERROR displays highlighted error messages
 	LOGERROR
 )
 
-// App TODO: Doc
+// App contains all the information related to the application displayed on the screen
 type App struct {
 	gui              *gocui.Gui
 	lock             *sync.Mutex
@@ -37,7 +37,7 @@ type App struct {
 	}
 }
 
-// NewApp TODO: Doc
+// NewApp generates a new user interface
 func NewApp() (*App, error) {
 	gui, err := gocui.NewGui(gocui.OutputNormal, false)
 	if err != nil {
@@ -66,7 +66,7 @@ func NewApp() (*App, error) {
 	}, nil
 }
 
-// Run TODO: Doc
+// Run allows to start the application
 func (app *App) Run() error {
 	defer logrus.Debug("Application closed")
 	// Configuration

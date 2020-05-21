@@ -10,10 +10,10 @@ import (
 	"github.com/cosasdepuma/elliot/app/validator"
 )
 
-// Plugin TODO: Doc
+// Plugin allows it to be executed by Elliot
 type Plugin struct{}
 
-// Check TODO: Doc
+// Check that all parameters are defined correctly
 func (plugin Plugin) Check() error {
 	if !validator.IsValidDomain(env.Config.Target) {
 		return errors.New("A valid domain should be specified")
@@ -29,7 +29,7 @@ func (plugin Plugin) Check() error {
 	return nil
 }
 
-// Run TODO: Doc
+// Run is the entrypoint of the plugin
 func (plugin Plugin) Run() {
 	if err := plugin.Check(); err != nil {
 		env.Channels.Bad <- err
@@ -37,20 +37,20 @@ func (plugin Plugin) Run() {
 	}
 
 	results := map[int]string{}
-	channel := make(chan *Port, len(env.Config.Params.([]int)))
+	channel := make(chan *sPort, len(env.Config.Params.([]int)))
 
-	scanner := NewPortScanner(env.Config.Target)
+	scanner := newPortScanner(env.Config.Target)
 
 	for _, port := range env.Config.Params.([]int) {
-		go func(port int) { channel <- scanner.CheckTCPPort(port) }(port)
+		go func(port int) { channel <- scanner.checkTCPPort(port) }(port)
 	}
 
 	progress := len(env.Config.Params.([]int))
 	for progress > 0 {
 		progress--
 		result := <-channel
-		if result.IsOpen() {
-			results[result.number] = result.String()
+		if result.isOpen() {
+			results[result.number] = result.string()
 		}
 	}
 

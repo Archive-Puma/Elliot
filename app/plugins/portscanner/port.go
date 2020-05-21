@@ -5,8 +5,7 @@ import (
 	"strings"
 )
 
-// Port TODO: Doc
-type Port struct {
+type sPort struct {
 	protocol string
 	number   int
 	status   string
@@ -14,30 +13,30 @@ type Port struct {
 	banner   string
 }
 
-func newPort(protocol string, number int) *Port {
-	port := Port{protocol: protocol, number: number, status: "close", service: "unknown"}
+func newPort(protocol string, number int) *sPort {
+	port := sPort{protocol: protocol, number: number, status: "close", service: "unknown"}
 	port.predictService()
 	return &port
 }
 
-func (port *Port) setBanner(banner string) {
+func (port *sPort) setBanner(banner string) {
 	port.banner = banner
 }
 
-func (port *Port) setOpen() {
+func (port *sPort) setOpen() {
 	port.status = "open"
 }
 
-// IsOpen TODO: Doc
-func (port Port) IsOpen() bool {
+// IsOpen
+func (port sPort) isOpen() bool {
 	return port.status == "open"
 }
 
-func (port Port) String() string {
+func (port sPort) string() string {
 	return fmt.Sprintf("%5d/%s\t%-7s\t%-9s\t%s", port.number, port.protocol, port.status, port.service, strings.TrimSpace(port.banner))
 }
 
-func (port *Port) predictService() {
+func (port *sPort) predictService() {
 	if port.protocol == "tcp" {
 		if predict, ok := mTCP[port.number]; ok {
 			port.service = predict

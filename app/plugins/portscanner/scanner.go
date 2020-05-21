@@ -8,34 +8,30 @@ import (
 	"time"
 )
 
-// PortScanner TODO: Doc
-type PortScanner struct {
+type sPortScanner struct {
 	host    string
 	lock    sync.Mutex
 	pool    chan bool
 	timeout time.Duration
-	Results map[int]*Port
+	Results map[int]*sPort
 }
 
-// NewPortScanner TODO: Doc
-func NewPortScanner(host string) *PortScanner {
-	return &PortScanner{
+func newPortScanner(host string) *sPortScanner {
+	return &sPortScanner{
 		host:    host,
 		timeout: time.Second * time.Duration(2),
-		lock:    sync.Mutex{}, Results: map[int]*Port{}}
+		lock:    sync.Mutex{}, Results: map[int]*sPort{}}
 }
 
-// SetTimeout TODO: Doc
-func (scanner *PortScanner) SetTimeout(timeout time.Duration) {
+func (scanner *sPortScanner) setTimeout(timeout time.Duration) {
 	scanner.timeout = timeout
 }
 
-func (scanner *PortScanner) withPort(port int) string {
+func (scanner *sPortScanner) withPort(port int) string {
 	return fmt.Sprintf("%s:%d", scanner.host, port)
 }
 
-// CheckTCPPort TODO: Doc
-func (scanner *PortScanner) CheckTCPPort(port int) *Port {
+func (scanner *sPortScanner) checkTCPPort(port int) *sPort {
 	scannedPort := newPort("tcp", port)
 
 	addr, err := net.ResolveTCPAddr("tcp4", scanner.withPort(port))

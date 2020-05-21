@@ -11,10 +11,10 @@ import (
 	"github.com/cosasdepuma/elliot/app/validator"
 )
 
-// Plugin TODO: Doc
+// Plugin allows it to be executed by Elliot
 type Plugin struct{}
 
-// Check TODO: Doc
+// Check that all parameters are defined correctly
 func (plgn Plugin) Check() error {
 	if !validator.IsValidURL(env.Config.Target) {
 		return errors.New("A valid URL should be specified")
@@ -23,7 +23,7 @@ func (plgn Plugin) Check() error {
 	return nil
 }
 
-// Run TODO: Doc
+// Run is the entrypoint of the plugin
 func (plgn Plugin) Run() {
 	if err := plgn.Check(); err != nil {
 		env.Channels.Bad <- err
@@ -43,41 +43,6 @@ func (plgn Plugin) Run() {
 		env.Channels.Bad <- errors.New("Cannot read robots.txt")
 		return
 	}
-
-	// results := strings.Split(strings.TrimSpace(string(bRobots)), "\n")
-
-	// TODO: Implement disallow only
-	// results = filterDisallow(results)
-
-	// TODO: Implement extended
-	// results = extendedMode(results)
-
 	results := strings.TrimSpace(string(bRobots))
 	env.Channels.Ok <- results
-}
-
-func filterDisallow(robots []string) []string {
-	disallowed := make([]string, 0)
-	for _, robot := range robots {
-		if strings.HasPrefix(robot, "Disallow: ") {
-			disallowed = append(disallowed, strings.TrimSpace(strings.SplitN(robot, ": ", 2)[1]))
-		}
-	}
-	return disallowed
-}
-
-func extendedMode(robots []string) []string {
-	extended := make([]string, 0)
-	for _, robot := range robots {
-		if strings.HasPrefix(robot, "Allow: ") || strings.HasPrefix(robot, "Disallow: ") || strings.HasPrefix(robot, "/") {
-			splits := strings.SplitN(robot, "/", 2)
-			url := env.Config.Target
-			if !strings.HasSuffix(url, "/") {
-				url = fmt.Sprintf("%s%s", url, "/")
-			}
-			robot = fmt.Sprintf("%s%s%s", splits[0], url, splits[1])
-		}
-		extended = append(extended, robot)
-	}
-	return extended
 }

@@ -9,12 +9,12 @@ import (
 	"github.com/cosasdepuma/elliot/app/validator"
 )
 
-// Plugin TODO: Doc
+// Plugin allows it to be executed by Elliot
 type Plugin struct{}
 
 type function func(string) ([]string, error)
 
-// Check TODO: Doc
+// Check that all parameters are defined correctly
 func (plgn Plugin) Check() error {
 	if !validator.IsValidDomain(env.Config.Target) {
 		return errors.New("A valid domain should be specified")
@@ -23,8 +23,7 @@ func (plgn Plugin) Check() error {
 	return nil
 }
 
-// Run TODO: Doc
-// -- Fixme: Can't rerun module
+// Run is the entrypoint of the plugin
 func (plgn Plugin) Run() {
 	if err := plgn.Check(); err != nil {
 		env.Channels.Bad <- err
@@ -87,3 +86,8 @@ func filterDuplicates(data []string) []string {
 	}
 	return subdomains
 }
+
+/*
+	Documentation:
+		- Subdomains: A lot of APIs (https://github.com/tomnomnom/assetfinder)
+*/

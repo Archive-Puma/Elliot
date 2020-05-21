@@ -9,7 +9,7 @@ import (
 	"github.com/cosasdepuma/elliot/app/cli"
 )
 
-// Entrypoint TODO: Doc
+// Entrypoint defines the starting point of the program
 func Entrypoint() {
 	logrus.SetLevel(logrus.InfoLevel)
 	logs, err := os.OpenFile("elliot.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
@@ -30,8 +30,3 @@ func Entrypoint() {
 		fmt.Printf("[!] %s\n", err.Error())
 	}
 }
-
-/*
-	Documentation:
-		- Subdomains: A lot of APIs (https://github.com/tomnomnom/assetfinder)
-*/
