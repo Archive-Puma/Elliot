@@ -12,7 +12,7 @@ import (
 type Plugin struct{}
 
 // Check TODO: Doc
-func (plugin Plugin) Check() error {
+func (plugin Plugin) check() error {
 	if !validator.IsValidDomain(env.Params.Target) {
 		return errors.New("A valid domain should be specified")
 	}

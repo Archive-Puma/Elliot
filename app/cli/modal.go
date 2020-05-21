@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	"github.com/sirupsen/logrus"
+
+	"github.com/cosasdepuma/elliot/app/env"
 )
 
 func (app *App) showModal(name string) error {
@@ -13,7 +15,7 @@ func (app *App) showModal(name string) error {
 	if !ok {
 		return errors.New("Modal not found")
 	}
-	app.Params = nil
+	env.Config.Params = nil
 	app.currentModal = name
 	if app.currentView != -1 {
 		app.lastView = app.currentView
@@ -34,7 +36,7 @@ func (app *App) closeModal() error {
 		return err
 	}
 	app.currentView = app.lastView
-	app.Params = strings.TrimSpace(view.Buffer())
+	env.Config.Params = strings.TrimSpace(view.Buffer())
 	_, err = app.gui.SetView(app.currentModal, modal.coords.x, modal.coords.y, modal.coords.w, modal.coords.h, 0)
 	app.currentModal = ""
 	return err

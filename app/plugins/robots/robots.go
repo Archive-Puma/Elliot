@@ -16,7 +16,7 @@ type Plugin struct{}
 
 // Check TODO: Doc
 func (plgn Plugin) Check() error {
-	if !validator.IsValidURL(env.Params.Target) {
+	if !validator.IsValidURL(env.Config.Target) {
 		return errors.New("A valid URL should be specified")
 	}
 
@@ -30,11 +30,10 @@ func (plgn Plugin) Run() {
 		return
 	}
 
-	path := fmt.Sprintf("%s/robots.txt", env.Params.Target)
+	path := fmt.Sprintf("%s/robots.txt", env.Config.Target)
 	resp, err := http.Get(path)
 	if err != nil {
 		env.Channels.Bad <- errors.New("Robots.txt not found")
-		// env.Channels.Done <- struct{}{}
 		return
 	}
 	defer resp.Body.Close()
@@ -42,7 +41,6 @@ func (plgn Plugin) Run() {
 	bRobots, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		env.Channels.Bad <- errors.New("Cannot read robots.txt")
-		// env.Channels.Done <- struct{}{}
 		return
 	}
 
@@ -73,7 +71,7 @@ func extendedMode(robots []string) []string {
 	for _, robot := range robots {
 		if strings.HasPrefix(robot, "Allow: ") || strings.HasPrefix(robot, "Disallow: ") || strings.HasPrefix(robot, "/") {
 			splits := strings.SplitN(robot, "/", 2)
-			url := env.Params.Target
+			url := env.Config.Target
 			if !strings.HasSuffix(url, "/") {
 				url = fmt.Sprintf("%s%s", url, "/")
 			}

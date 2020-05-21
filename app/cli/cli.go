@@ -1,10 +1,13 @@
 package cli
 
 import (
+	"sync"
 	"time"
 
 	"github.com/awesome-gocui/gocui"
 	"github.com/sirupsen/logrus"
+
+	"github.com/cosasdepuma/elliot/app/env"
 )
 
 const (
@@ -16,25 +19,21 @@ const (
 
 // App TODO: Doc
 type App struct {
-	gui           *gocui.Gui
-	logMsg        string
-	logLevel      int
-	mainViews     []sView
-	modalViews    map[string]sView
-	keybindings   []sKeybinding
-	currentPlugin int
-	pluginName    string
-	currentModal  string
-	currentView   int
-	lastView      int
-	dimensions    struct {
+	gui              *gocui.Gui
+	lock             *sync.Mutex
+	logMsg           string
+	logLevel         int
+	mainViews        []sView
+	modalViews       map[string]sView
+	keybindings      []sKeybinding
+	currentPlugin    int
+	pluginName       string
+	currentModal     string
+	currentView      int
+	lastView         int
+	runningInstances int
+	dimensions       struct {
 		width, height int
-	}
-	Params   interface{}
-	Channels struct {
-		Ok   chan string
-		Bad  chan error
-		Stop chan struct{}
 	}
 }
 
@@ -45,12 +44,14 @@ func NewApp() (*App, error) {
 		return nil, err
 	}
 	return &App{
-		gui:           gui,
-		logMsg:        "",
-		logLevel:      LOGINFO,
-		lastView:      0,
-		currentView:   0,
-		currentPlugin: 0,
+		gui:              gui,
+		lock:             &sync.Mutex{},
+		logMsg:           "",
+		logLevel:         LOGINFO,
+		lastView:         0,
+		currentView:      0,
+		currentPlugin:    0,
+		runningInstances: 0,
 		mainViews: []sView{
 			{name: "Target", coords: coordinates{0, 0, -1, 2}, frame: true, editable: true},
 			{name: "Plugins", coords: coordinates{0, 3, 18, -4}, frame: true, list: true},
@@ -61,7 +62,6 @@ func NewApp() (*App, error) {
 		modalViews: map[string]sView{
 			"Ports": {name: "Ports", coords: coordinates{-20, -1, -18, 1}, editable: true},
 		},
-		Params:       nil,
 		currentModal: "",
 	}, nil
 }
@@ -71,16 +71,20 @@ func (app *App) Run() error {
 	defer logrus.Debug("Application closed")
 	// Configuration
 	defer app.gui.Close()
-	app.Channels.Ok = make(chan string)
-	defer close(app.Channels.Ok)
-	app.Channels.Bad = make(chan error)
-	defer close(app.Channels.Bad)
-	app.Channels.Stop = make(chan struct{})
-	defer close(app.Channels.Stop)
+	env.Channels.Ok = make(chan string)
+	defer close(env.Channels.Ok)
+	env.Channels.Bad = make(chan error)
+	defer close(env.Channels.Bad)
+	env.Channels.Done = make(chan struct{})
+	defer close(env.Channels.Done)
+	env.Channels.Start = make(chan struct{})
+	defer close(env.Channels.Start)
+	env.Channels.Stop = make(chan struct{})
+	defer close(env.Channels.Stop)
 	logrus.Debug("Application configured")
 
 	// Init the refresher
-	go app.refresher(time.Second*10, func() error { return nil })
+	go app.refresher(time.Second)
 	logrus.Debug("Refresher running")
 
 	// Theme

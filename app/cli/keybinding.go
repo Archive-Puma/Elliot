@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"fmt"
-
 	"github.com/awesome-gocui/gocui"
 	"github.com/sirupsen/logrus"
 
@@ -34,6 +32,9 @@ func (app *App) setKeybindings() error {
 		}
 	}
 	for modal := range app.modalViews {
+		if err := app.gui.SetKeybinding(modal, gocui.KeyEsc, gocui.ModNone, app.keybindingCancelModal); err != nil {
+			return err
+		}
 		if err := app.gui.SetKeybinding(modal, gocui.KeyEnter, gocui.ModNone, app.keybindingCloseModal); err != nil {
 			return err
 		}
@@ -46,7 +47,12 @@ func (app *App) keybindingDisabled(gui *gocui.Gui, view *gocui.View) error {
 	return nil
 }
 
+func (app *App) keybindingCancelModal(gui *gocui.Gui, view *gocui.View) error {
+	return app.closeModal()
+}
+
 func (app *App) keybindingCloseModal(gui *gocui.Gui, view *gocui.View) error {
+	app.sendStartSignal()
 	return app.closeModal()
 }
 
@@ -88,11 +94,16 @@ func (app *App) keybindingNextPlugin(gui *gocui.Gui, view *gocui.View) error {
 }
 
 func (app *App) keybindingRun(gui *gocui.Gui, view *gocui.View) error {
-	if err := app.getPluginFocused(); err != nil {
+	if err := app.getTarget(); err != nil {
 		return err
 	}
-	app.logLevel = LOGINFO
-	app.logMsg = fmt.Sprintf("Running %s...", app.pluginName)
+	if err := app.getPlugin(); err != nil {
+		return err
+	}
+	if err := app.getParams(); err != nil {
+		return err
+	}
+	app.runPlugin()
 	return nil
 }
 

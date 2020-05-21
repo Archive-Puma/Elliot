@@ -16,7 +16,7 @@ type function func(string) ([]string, error)
 
 // Check TODO: Doc
 func (plgn Plugin) Check() error {
-	if !validator.IsValidDomain(env.Params.Target) {
+	if !validator.IsValidDomain(env.Config.Target) {
 		return errors.New("A valid domain should be specified")
 	}
 
@@ -26,6 +26,11 @@ func (plgn Plugin) Check() error {
 // Run TODO: Doc
 // -- Fixme: Can't rerun module
 func (plgn Plugin) Run() {
+	if err := plgn.Check(); err != nil {
+		env.Channels.Bad <- err
+		return
+	}
+
 	subdomains := make([]string, 0)
 
 	availableMethods := map[string]function{
@@ -42,7 +47,7 @@ func (plgn Plugin) Run() {
 	wg.Add(nMethods)
 
 	for _, method := range availableMethods {
-		go concurrentMethod(method, &wg, &channel)
+		go concurrentMethod(method, env.Config.Target, &wg, &channel)
 	}
 
 	for nMethods > 0 {
@@ -60,9 +65,9 @@ func (plgn Plugin) Run() {
 	env.Channels.Ok <- result
 }
 
-func concurrentMethod(method function, wg *sync.WaitGroup, channel *chan []string) {
+func concurrentMethod(method function, target string, wg *sync.WaitGroup, channel *chan []string) {
 	defer wg.Done()
-	subdomains, err := method(env.Params.Target)
+	subdomains, err := method(target)
 	if err != nil {
 		*channel <- nil
 	} else {
