@@ -1,14 +1,33 @@
+📜 Cheatsheet
+---
+| Icon | Description |
+| --- | --- |
+| 🚀 | Improvement |
+|💄| Visual update |
+| ⚗️ | Plugin related |
+| 🔧 | Script related |
+| 🐋 | Container related |
+| 📝 | Documentation related |
+
+♻️ Changelog
+---
+
 ### v1.0.1
-- `Plugin`: Common Crawl
-- `Script`: Documentation update 
-- `Plugin`: subdomainer (renamed: subdomain)
-- `DOC`: ***Thanks to*** section in README
+| Type | Description |
+| --- | --- |
+| ⚗️ | `commoncrawl` added |
+| ⚗️ | `subdomain` renamed to `subdomainer`
+| 🔧 | Documentation updater created |
+| 📝 | `Thanks to` section in [README](https://github.com/CosasDePuma/Elliot/blob/master/README.md) |
 
 ### v1.0.0
-- `NEW`: Terminal User Interface implemented
-- `Plugin`: robots.txt
-- `Plugin`: portscanner
-- `Plugin`: subdomainer
-- `NEW`: Dockerfile
-- `Script`: Cross-compile
-- `NEW`: Logging system
+
+| Type | Description |
+| --- | --- |
+| 🚀 | Terminal User Interface implemented |
+| 🚀 | Logging system implemented |
+| ⚗️ | `robots.txt` added |
+| ⚗️ | `portscanner` added |
+| ⚗️ | `subdomain` added  |
+| 🔧 | Crossbuild script created |
+| 🐋 | `Dockerfile` created |
