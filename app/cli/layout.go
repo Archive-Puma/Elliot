@@ -127,18 +127,16 @@ func (app *App) displayShortcuts() error {
 		return err
 	}
 	view.Clear()
-	fmt.Fprint(view, "Shortcuts: [^C] Exit ")
+	fmt.Fprint(view, "Shortcuts: [^C] Exit [Enter] Run ")
 
 	if app.currentView == -1 {
-		fmt.Fprint(view, "[Esc] Close ")
+		fmt.Fprint(view, "[Esc] Close")
 	} else {
 		fmt.Fprint(view, "[TAB] Next Frame ")
 	}
-	fmt.Fprint(view, "[Enter] Run ")
 
-	switch app.currentView {
-	case 1:
-		fmt.Fprint(view, "[Up|Down] Navigate")
+	if app.currentView == 0 {
+		fmt.Fprint(view, "[Up|Down] Change Plugin")
 	}
 	return nil
 }

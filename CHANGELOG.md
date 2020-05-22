@@ -16,7 +16,8 @@
 | Type | Description |
 | --- | --- |
 | ⚗️ | `commoncrawl` added |
-| ⚗️ | `subdomain` renamed to `subdomainer`
+| ⚗️ | `subdomain` renamed to `subdomainer` |
+|💄| Only two main frames: `Target`and `Results` |
 | 🔧 | Documentation updater created |
 | 📝 | `Thanks to` section in [README](https://github.com/CosasDePuma/Elliot/blob/master/README.md) |
 

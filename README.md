@@ -47,7 +47,7 @@ git clone https://github.com/cosasdepuma/Elliot
 
 Once downloaded, do not hesitate to modify everything you think necessary.
 
-You should take a look at the [Changelog](https://github.com/CosasDePuma/Elliot/blob/master/ROADMAP.md) file to get an idea of what is being done.
+You should take a look at the [Changelog](https://github.com/CosasDePuma/Elliot/blob/master/CHANGELOG.md) file to get an idea of what is being done.
 
 🔧 Compile
 ---

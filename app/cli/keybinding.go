@@ -17,13 +17,10 @@ func (app *App) setKeybindings() error {
 	app.keybindings = []sKeybinding{
 		{"", gocui.KeyCtrlC, app.keybindingExit},
 		{"", gocui.KeyTab, app.keybindingNextView},
-		{"Target", gocui.KeyArrowUp, app.keybindingDisabled},
-		{"Target", gocui.KeyArrowDown, app.keybindingDisabled},
+		{"Target", gocui.KeyArrowUp, app.keybindingPreviousPlugin},
+		{"Target", gocui.KeyArrowDown, app.keybindingNextPlugin},
 		{"Target", gocui.KeyEnter, app.keybindingRun},
-		{"Plugins", gocui.KeyEnter, app.keybindingRun},
 		{"Results", gocui.KeyEnter, app.keybindingRun},
-		{"Plugins", gocui.KeyArrowUp, app.keybindingPreviousPlugin},
-		{"Plugins", gocui.KeyArrowDown, app.keybindingNextPlugin},
 	}
 
 	for _, keybinding := range app.keybindings {
@@ -47,53 +44,62 @@ func (app *App) keybindingDisabled(gui *gocui.Gui, view *gocui.View) error {
 	return nil
 }
 
-func (app *App) keybindingCancelModal(gui *gocui.Gui, view *gocui.View) error {
+func (app *App) keybindingCancelModal(_ *gocui.Gui, _ *gocui.View) error {
 	return app.closeModal()
 }
 
-func (app *App) keybindingCloseModal(gui *gocui.Gui, view *gocui.View) error {
+func (app *App) keybindingCloseModal(_ *gocui.Gui, _ *gocui.View) error {
 	app.sendStartSignal()
 	return app.closeModal()
 }
 
-func (app *App) keybindingNextView(gui *gocui.Gui, view *gocui.View) error {
-	if app.currentView != -1 {
-		app.currentView = (app.currentView + 1) % (len(app.mainViews) - 2)
+func (app *App) keybindingNextView(_ *gocui.Gui, _ *gocui.View) error {
+	switch app.currentView {
+	case 0:
+		app.currentView = 2
+	case 2:
+		app.currentView = 0
 	}
 	return app.setFocus()
 }
 
-func (app *App) keybindingPreviousPlugin(gui *gocui.Gui, view *gocui.View) error {
-	if view != nil {
-		ox, oy := view.Origin()
-		cx, cy := view.Cursor()
-		if err := view.SetCursor(cx, cy-1); err != nil && oy > 0 {
-			if err := view.SetOrigin(ox, oy-1); err != nil {
+func (app *App) keybindingPreviousPlugin(_ *gocui.Gui, _ *gocui.View) error {
+	view, err := app.gui.View("Plugins")
+	if err != nil {
+		return err
+	}
+	ox, oy := view.Origin()
+	cx, cy := view.Cursor()
+	if err := view.SetCursor(cx, cy-1); err != nil && oy > 0 {
+		if err := view.SetOrigin(ox, oy-1); err != nil {
+			return err
+		}
+	}
+
+	_, app.currentPlugin = view.Cursor()
+	return nil
+}
+
+func (app *App) keybindingNextPlugin(_ *gocui.Gui, _ *gocui.View) error {
+	view, err := app.gui.View("Plugins")
+	if err != nil {
+		return err
+	}
+	ox, oy := view.Origin()
+	cx, cy := view.Cursor()
+	if cy+1 < plugins.Amount {
+		if err := view.SetCursor(cx, cy+1); err != nil {
+			if err := view.SetOrigin(ox, oy+1); err != nil {
 				return err
 			}
 		}
 	}
+
 	_, app.currentPlugin = view.Cursor()
 	return nil
 }
 
-func (app *App) keybindingNextPlugin(gui *gocui.Gui, view *gocui.View) error {
-	if view != nil {
-		ox, oy := view.Origin()
-		cx, cy := view.Cursor()
-		if cy+1 < plugins.Amount {
-			if err := view.SetCursor(cx, cy+1); err != nil {
-				if err := view.SetOrigin(ox, oy+1); err != nil {
-					return err
-				}
-			}
-		}
-	}
-	_, app.currentPlugin = view.Cursor()
-	return nil
-}
-
-func (app *App) keybindingRun(gui *gocui.Gui, view *gocui.View) error {
+func (app *App) keybindingRun(_ *gocui.Gui, _ *gocui.View) error {
 	if err := app.getTarget(); err != nil {
 		return err
 	}
@@ -107,6 +113,6 @@ func (app *App) keybindingRun(gui *gocui.Gui, view *gocui.View) error {
 	return nil
 }
 
-func (app *App) keybindingExit(gui *gocui.Gui, view *gocui.View) error {
+func (app *App) keybindingExit(_ *gocui.Gui, _ *gocui.View) error {
 	return gocui.ErrQuit
 }
