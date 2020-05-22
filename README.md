@@ -64,7 +64,6 @@ You can also specify both the operating system and the target architecture:
 GOOS=windows GOARCH=amd64 go build -o elliot.exe main.go
 ```
 
-You can automate the compilation process using the script found inside the **scripts** folder called `x-build`. It supports the following os/arch:
 
 | Supported x32 | Supported x64 |
 | --- | --- |
@@ -72,6 +71,16 @@ You can automate the compilation process using the script found inside the **scr
 | linux/386 | linux/amd64 |
 | darwin/386 | darwin/amd64 |
 | freebsd/386 | freebsd/amd64 |
+
+💕 Thanks to
+---
+Elliot grows thanks to the curiosity of its creator, which means that some of its features are born from ideas taken from other repositories and tools:
+
+| Idea | Source |
+| --- | --- |
+| Subdomain APIs | [assetfinder](https://github.com/tomnomnom/assetfinder) |
+| Common Crawler API | [waybackurls](https://github.com/daehee/waybackurls/blob/master/main.go#L174) |
+
 
 🐙 Support the developer!
 ----

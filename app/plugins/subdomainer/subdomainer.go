@@ -1,4 +1,4 @@
-package subdomain
+package subdomainer
 
 import (
 	"errors"
@@ -86,8 +86,3 @@ func filterDuplicates(data []string) []string {
 	}
 	return subdomains
 }
-
-/*
-	Documentation:
-		- Subdomains: A lot of APIs (https://github.com/tomnomnom/assetfinder)
-*/

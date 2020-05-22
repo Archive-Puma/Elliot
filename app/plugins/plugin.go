@@ -4,7 +4,7 @@ import (
 	"github.com/cosasdepuma/elliot/app/plugins/commoncrawler"
 	"github.com/cosasdepuma/elliot/app/plugins/portscanner"
 	"github.com/cosasdepuma/elliot/app/plugins/robots"
-	"github.com/cosasdepuma/elliot/app/plugins/subdomain"
+	"github.com/cosasdepuma/elliot/app/plugins/subdomainer"
 )
 
 var (
@@ -16,7 +16,7 @@ var (
 		"commoncrawler": commoncrawler.Plugin{},
 		"portscanner":   portscanner.Plugin{},
 		"robots.txt":    robots.Plugin{},
-		"subdomain":     subdomain.Plugin{},
+		"subdomainer":   subdomainer.Plugin{},
 	}
 	// Required specifies what parameters are necessary to run a plugin
 	Required = map[string]string{

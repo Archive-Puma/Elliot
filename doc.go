@@ -14,7 +14,7 @@ A new all-in-one hacking framework is going to be unleashed... or is it just a p
 	┌─Plugins─────────┐┌─Results────────────────────────┐
 	│>portscanner     ││     PORT    STATE      SERVICE │
 	│ robots.txt      ││   80/tcp    open       http    │
-	│ subdomain       ││  443/tcp    open       https	│
+	│ subdomain       ││  443/tcp    open       https   │
 	└─────────────────┘└────────────────────────────────┘
 	Ɇlliot: Done.
 	─────────────────────────────────────────────────────

@@ -1,4 +1,4 @@
-package subdomain
+package subdomainer
 
 import (
 	"encoding/json"
@@ -7,10 +7,6 @@ import (
 	"io/ioutil"
 	"net/http"
 )
-
-type formatThreatCrowd struct {
-	Subdomains []string `json:"subdomains"`
-}
 
 func fetchThreatCrowd(domain string) ([]string, error) {
 	// Compose the URL
@@ -26,13 +22,15 @@ func fetchThreatCrowd(domain string) ([]string, error) {
 		return nil, errors.New("ThreatCrowd does not respond correctly")
 	}
 	// Parse the JSON
-	subdomains := formatThreatCrowd{}
+	subdomains := struct {
+		Results []string `json:"subdomains"`
+	}{}
 	err = json.Unmarshal([]byte(body), &subdomains)
 	if err != nil {
 		return nil, errors.New("Bad JSON format using ThreatCrowd")
 	}
 	// Return the JSON
-	return subdomains.Subdomains, nil
+	return subdomains.Results, nil
 }
 
 func methodThreatCrowd(domain string) ([]string, error) {

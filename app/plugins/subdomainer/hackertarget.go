@@ -1,4 +1,4 @@
-package subdomain
+package subdomainer
 
 import (
 	"bufio"
