@@ -21,10 +21,6 @@ jobs:
             key: go-${{ runner.os }}-${{ hashFiles('**/go.sum') }}
             restore-keys: |
               go-${{ runner.os }}-
-        - name: Build 32bit
-          run: go build -v -o dist/elliot-linux-386 main.go
-          env:
-            GOARCH: 386
         - name: Build 64bit
           run: go build -v -o dist/elliot-linux-amd64 main.go
           env:
@@ -75,10 +71,6 @@ jobs:
             key: go-${{ runner.os }}-${{ hashFiles('**/go.sum') }}
             restore-keys: |
               go-${{ runner.os }}-
-        - name: Build 32bit
-          run: go build -v -o dist/elliot-windows-386.exe main.go
-          env:
-            GOARCH: 386
         - name: Build 64bit
           run: go build -v -o dist/elliot-windows-amd64.exe main.go
           env:
