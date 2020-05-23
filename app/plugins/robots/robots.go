@@ -9,6 +9,7 @@ import (
 
 	"github.com/cosasdepuma/elliot/app/env"
 	"github.com/cosasdepuma/elliot/app/validator"
+	"github.com/sirupsen/logrus"
 )
 
 // Plugin allows it to be executed by Elliot
@@ -43,6 +44,11 @@ func (plgn Plugin) Run() {
 		env.Channels.Bad <- errors.New("Cannot read robots.txt")
 		return
 	}
+
 	results := strings.TrimSpace(string(bRobots))
+
 	env.Channels.Ok <- results
+	if err := plgn.Save(strings.Split(results, "\n")); err != nil {
+		logrus.Error(err)
+	}
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/cosasdepuma/elliot/app/cli"
+	"github.com/cosasdepuma/elliot/app/out"
 )
 
 // Entrypoint defines the starting point of the program
@@ -24,6 +25,10 @@ func Entrypoint() {
 	if err != nil {
 		fmt.Printf("[!] %s\n", err.Error())
 		return
+	}
+
+	if err := out.DB.CreateDatabase("elliot.db"); err != nil {
+		fmt.Printf("[!] %s\n", err.Error())
 	}
 
 	if err := app.Run(); err != nil {

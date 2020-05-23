@@ -8,6 +8,7 @@ import (
 
 	"github.com/cosasdepuma/elliot/app/env"
 	"github.com/cosasdepuma/elliot/app/validator"
+	"github.com/sirupsen/logrus"
 )
 
 // Plugin allows it to be executed by Elliot
@@ -36,7 +37,7 @@ func (plugin Plugin) Run() {
 		return
 	}
 
-	results := map[int]string{}
+	results := map[int]*sPort{}
 	channel := make(chan *sPort, len(env.Config.Params.([]int)))
 
 	scanner := newPortScanner(env.Config.Target)
@@ -50,7 +51,7 @@ func (plugin Plugin) Run() {
 		progress--
 		result := <-channel
 		if result.isOpen() {
-			results[result.number] = result.string()
+			results[result.number] = result
 		}
 	}
 
@@ -60,10 +61,14 @@ func (plugin Plugin) Run() {
 	}
 	sort.Ints(sorted)
 
+	slice := make([]string, 0)
 	buffer := fmt.Sprintf("%9s\t%-7s\t%-9s\t%s\n", "PORT", "STATE", "SERVICE", "BANNER")
 	for _, port := range sorted {
-		buffer = fmt.Sprintf("%s%s\n", buffer, results[port])
+		slice = append(slice, results[port].format())
+		buffer = fmt.Sprintf("%s%s\n", buffer, results[port].string())
 	}
-
 	env.Channels.Ok <- strings.TrimSuffix(buffer, "\n")
+	if err := plugin.Save(slice); err != nil {
+		logrus.Error(err)
+	}
 }

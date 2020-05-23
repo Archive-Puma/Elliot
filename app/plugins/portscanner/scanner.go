@@ -44,7 +44,7 @@ func (scanner *sPortScanner) checkTCPPort(port int) *sPort {
 			bytesLen, err := conn.Read(buffer)
 			if err == nil {
 				banner := string(buffer[:bytesLen])
-				scannedPort.setBanner(strings.SplitN(banner, "\n", 1)[0])
+				scannedPort.setBanner(strings.TrimSpace(strings.SplitN(banner, "\n", 1)[0]))
 			}
 
 		}

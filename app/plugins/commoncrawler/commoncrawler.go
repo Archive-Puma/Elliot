@@ -10,6 +10,7 @@ import (
 
 	"github.com/cosasdepuma/elliot/app/env"
 	"github.com/cosasdepuma/elliot/app/validator"
+	"github.com/sirupsen/logrus"
 )
 
 // Plugin allows it to be executed by Elliot
@@ -43,6 +44,7 @@ func (plgn Plugin) Run() {
 	defer resp.Body.Close()
 	// Grab the content
 	results := ""
+	slice := make([]string, 0)
 	sc := bufio.NewScanner(resp.Body)
 	for sc.Scan() {
 		link := struct {
@@ -53,7 +55,11 @@ func (plgn Plugin) Run() {
 			env.Channels.Bad <- errors.New("No results found")
 			return
 		}
+		slice = append(slice, link.URL)
 		results = fmt.Sprintf("%s%s\n", results, link.URL)
 	}
 	env.Channels.Ok <- strings.TrimSpace(results)
+	if err := plgn.Save(slice); err != nil {
+		logrus.Error(err)
+	}
 }

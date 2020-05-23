@@ -7,6 +7,7 @@ import (
 
 	"github.com/cosasdepuma/elliot/app/env"
 	"github.com/cosasdepuma/elliot/app/validator"
+	"github.com/sirupsen/logrus"
 )
 
 // Plugin allows it to be executed by Elliot
@@ -55,13 +56,17 @@ func (plgn Plugin) Run() {
 	}
 
 	result := ""
-	for _, subdomain := range filterDuplicates(subdomains) {
+	filtered := filterDuplicates(subdomains)
+	for _, subdomain := range filtered {
 		if len(subdomain) > 0 && subdomain != "error check your search parameter" {
 			result = fmt.Sprintf("%s%s\n", result, subdomain)
 		}
 	}
 
 	env.Channels.Ok <- result
+	if err := plgn.Save(filtered); err != nil {
+		logrus.Error(err)
+	}
 }
 
 func concurrentMethod(method function, target string, wg *sync.WaitGroup, channel *chan []string) {

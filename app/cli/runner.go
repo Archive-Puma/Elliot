@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cosasdepuma/elliot/app/env"
-	"github.com/cosasdepuma/elliot/app/plugins"
 	"github.com/sirupsen/logrus"
+
+	"github.com/cosasdepuma/elliot/app/env"
+	"github.com/cosasdepuma/elliot/app/out"
+	"github.com/cosasdepuma/elliot/app/plugins"
 )
 
 func (app *App) getTarget() error {
@@ -57,6 +59,7 @@ func (app *App) runPlugin() {
 			app.logLevel = LOGERROR
 			app.logMsg = err.Error()
 		case results := <-env.Channels.Ok:
+
 			app.logLevel = LOGINFO
 			app.logMsg = "Done."
 			if view, err := app.gui.View("Results"); err == nil {
@@ -76,8 +79,15 @@ func (app *App) runner() {
 		env.Channels.Bad <- errors.New("Plugin not found")
 		return
 	}
-	logrus.Info("Starting plugin")
+	if id, err := out.DB.GetTargetID(env.Config.Target); err != nil || id == -1 {
+		logrus.Debug("Writting target in DB")
+		if stmt, err := out.DB.Instance.Prepare("INSERT INTO `TARGET`(`TARGET`) VALUES (?)"); err == nil {
+			stmt.Exec(env.Config.Target)
+			stmt.Close()
+		}
+	}
 
+	logrus.Info("Starting plugin")
 	if app.runningInstances == 0 {
 		app.lock.Lock()
 		app.runningInstances++

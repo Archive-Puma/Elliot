@@ -10,13 +10,14 @@ import (
 var (
 	// Plugins collects all available plugins that can be run
 	Plugins = map[string]interface {
-		Check() error
 		Run()
+		Check() error
+		Save([]string) error
 	}{
-		"commoncrawler": commoncrawler.Plugin{},
-		"portscanner":   portscanner.Plugin{},
-		"robots.txt":    robots.Plugin{},
-		"subdomainer":   subdomainer.Plugin{},
+		"commoncrawler": new(commoncrawler.Plugin),
+		"portscanner":   new(portscanner.Plugin),
+		"robots.txt":    new(robots.Plugin),
+		"subdomainer":   new(subdomainer.Plugin),
 	}
 	// Required specifies what parameters are necessary to run a plugin
 	Required = map[string]string{
