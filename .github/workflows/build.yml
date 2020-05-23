@@ -1,6 +1,7 @@
 name: Build
 on:
-  push: master
+  push:
+    branches: master
 env:
     CGO_ENABLED: 1
 jobs:
