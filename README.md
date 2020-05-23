@@ -21,6 +21,12 @@ go get github.com/cosasdepuma/elliot
 
 You can also download the precompiles binary for your system in the [**Release**](https://github.com/CosasDePuma/Elliot/releases) tab.
 
+🏃 Run the application
+---
+To run the program, just type `elliot` in the terminal. A graphical interface will automatically open with which to execute the different processes.
+
+![elliot](https://github.com/CosasDePuma/Elliot/blob/master/.github/readme/elliot-cli.png)
+
 🐋 Dockerize
 ---
 You can execute the application in containerized environments like Docker. To download the image, just run:
@@ -52,18 +58,14 @@ You should take a look at the [Changelog](https://github.com/CosasDePuma/Elliot/
 🔧 Compile
 ---
 
-Compiling Elliot is extremely easy. Just run the command:
+Compiling Elliot is a quite tricky. Since Elliot relies on go-sqlite3, gcc may need to be installed on your system.
+To compile it, just run the command:
 
 ```go
-go build -o elliot main.go
+CGO_ENABLED=1 go build -o elliot main.go
 ```
 
 You can also specify both the operating system and the target architecture:
-
-```go
-GOOS=windows GOARCH=amd64 go build -o elliot.exe main.go
-```
-
 
 | Supported x32 | Supported x64 |
 | --- | --- |
