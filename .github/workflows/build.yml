@@ -1,7 +1,6 @@
 name: Build
 on:
-  push:
-    branches: master
+  push: master
 env:
     CGO_ENABLED: 1
 jobs:
@@ -14,13 +13,26 @@ jobs:
             go-version: 1.14
         - name: Clone the repository
           uses: actions/checkout@v2
-        - name: Build
-          run: go build -v -o elliot main.go
+        - name: Cache
+          uses: actions/cache@v2
+          with:
+            path: ~/go/pkg/mod
+            key: go-${{ runner.os }}-${{ hashFiles('**/go.sum') }}
+            restore-keys: |
+              go-${{ runner.os }}-
+        - name: Build 32bit
+          run: go build -v -o dist/elliot-linux-386 main.go
+          env:
+            GOARCH: 386
+        - name: Build 64bit
+          run: go build -v -o dist/elliot-linux-amd64 main.go
+          env:
+            GOARCH: amd64
         - name: Upload binary
           uses: actions/upload-artifact@v2
           with:
-            name: elliot-linux-amd64.exe
-            path: elliot
+            name: elliot-${{ runner.os }}
+            path: dist/*
     release_darwin:
         runs-on: macos-latest
         steps:
@@ -30,13 +42,22 @@ jobs:
             go-version: 1.14
         - name: Clone the repository
           uses: actions/checkout@v2
-        - name: Build
-          run: go build -v -o elliot main.go
+        - name: Cache
+          uses: actions/cache@v2
+          with:
+            path: ~/go/pkg/mod
+            key: go-${{ runner.os }}-${{ hashFiles('**/go.sum') }}
+            restore-keys: |
+              go-${{ runner.os }}-
+        - name: Build 64bit
+          run: go build -v -o dist/elliot-darwin-amd64 main.go
+          env:
+            GOARCH: amd64
         - name: Upload binary
           uses: actions/upload-artifact@v2
           with:
-            name: elliot-darwin-amd64
-            path: elliot
+            name: elliot-${{ runner.os }}
+            path: dist/*
     release_nt:
         runs-on: windows-latest
         steps:
@@ -46,10 +67,23 @@ jobs:
             go-version: 1.14
         - name: Clone the repository
           uses: actions/checkout@v2
-        - name: Build
-          run: go build -v -o elliot.exe main.go
-        - name: Upload binary
-          uses: actions/upload-artifact@v1
+        - name: Cache
+          uses: actions/cache@v2
           with:
-            name: elliot-windows-amd64.exe
-            path: elliot.exe
+            path: ~/go/pkg/mod
+            key: go-${{ runner.os }}-${{ hashFiles('**/go.sum') }}
+            restore-keys: |
+              go-${{ runner.os }}-
+        - name: Build 32bit
+          run: go build -v -o dist/elliot-windows-386.exe main.go
+          env:
+            GOARCH: 386
+        - name: Build 64bit
+          run: go build -v -o dist/elliot-windows-amd64.exe main.go
+          env:
+            GOARCH: amd64
+        - name: Upload binary
+          uses: actions/upload-artifact@v2
+          with:
+            name: elliot-${{ runner.os }}
+            path: dist/*
