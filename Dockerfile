@@ -3,7 +3,9 @@ FROM golang:alpine AS build
 WORKDIR /go/src/app
 COPY . /go/src/app
 
-RUN go build -o elliot main.go
+RUN apk add --no-cache --upgrade --virtual .requirements build-base && \
+    CGO_ENABLED=1 go build -v -o elliot main.go && \
+    apk del .requirements
 
 # ================================
 
@@ -13,6 +15,6 @@ RUN addgroup -S elliot && adduser -s /sbin/nologin -S elliot -G elliot
 USER elliot
 
 WORKDIR /app
-COPY --from=build /go/src/app/elliot /app/elliot
+COPY --from=build /go/src/app/elliot /bin/elliot
 
-ENTRYPOINT ["/app/elliot"]
+CMD ["/bin/elliot"]
