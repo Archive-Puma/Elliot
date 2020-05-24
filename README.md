@@ -81,8 +81,7 @@ Elliot grows thanks to the curiosity of its creator, which means that some of it
 | Idea | Source |
 | --- | --- |
 | Subdomain APIs | [assetfinder](https://github.com/tomnomnom/assetfinder) |
-| Common Crawler API | [waybackurls](https://github.com/daehee/waybackurls/blob/master/main.go#L174) |
-
+| Common Crawler API | [waybackurls](https://github.com/tomnomnom/waybackurls/blob/master/main.go#L174) |
 
 🐙 Support the developer!
 ----
