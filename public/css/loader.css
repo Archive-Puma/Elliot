@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Cardo&display=swap');
+
+@keyframes zodiac {
+    0% { content: 'Σ' }
+    5% { content: '♒︎' }
+    10% { content: '♎︎' }
+    15% { content: '♓︎' }
+    20% { content: '♑︎' }
+    25% { content: '☉' }
+    30% { content: '♐︎' }
+    35% { content: '☽' }
+    40% { content: '♈︎' }
+    45% { content: '♅' }
+    50% { content: '♒︎' }
+    55% { content: '♎︎' }
+    60% { content: '♓︎' }
+    65% { content: '♑︎' }
+    70% { content: '☉' }
+    75% { content: '♐︎' }
+    80% { content: '☽' }
+    85% { content: '♈︎' }
+    90% { content: '♅' }
+    95% { content: '♒︎' }
+   100% { content: 'Σ' }
+}
+
+html, body {
+   margin: 0;
+   padding: 0;
+   min-height: 100vh;
+}
+
+body {
+   background-color: #1a1a1a;
+}
+
+.root {
+   color: #fff;
+   height: 100vh;
+
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+.loader {
+   color: #fff;
+   border: none;
+   background: transparent;
+   transition: transform .3s ease-in-out;
+
+   font-family: 'Cardo', serif;
+}
+
+.loader::after {
+   content: "Σ";
+   font-size: 150px;
+   animation: zodiac 2s linear normal;
+}
+
+.loader:hover {
+   transform: scale(1.1);
+}

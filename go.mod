@@ -3,7 +3,6 @@ module github.com/cosasdepuma/elliot
 go 1.14
 
 require (
-	github.com/awesome-gocui/gocui v0.6.0
-	github.com/mattn/go-sqlite3 v2.0.3+incompatible
-	github.com/sirupsen/logrus v1.6.0
+	github.com/go-redis/redis v6.15.8+incompatible
+	github.com/gorilla/mux v1.7.4
 )
