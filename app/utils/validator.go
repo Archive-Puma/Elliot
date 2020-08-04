@@ -1,8 +1,12 @@
 package utils
 
+// === IMPORTS ===
+
 import (
 	"regexp"
 )
+
+// === PUBLIC METHODS ===
 
 // IsValidDomain checks if a domain has a valid format
 func IsValidDomain(domain string) bool {

@@ -1,5 +1,7 @@
 package modules
 
+// === IMPORTS ===
+
 import (
 	"bufio"
 	"bytes"
@@ -14,6 +16,9 @@ import (
 	"github.com/cosasdepuma/elliot/app/utils"
 )
 
+// === PUBLIC METHODS ===
+
+// Subdomains is a concurrent method to obtain the sub-domains associated to a domain using different services.
 func Subdomains(domain string, output *chan []string) {
 	availableMethods := [](func(string) ([]string, error)){
 		subdomainsInHackerTarget, subdomainsInThreatCrowd,
@@ -26,7 +31,7 @@ func Subdomains(domain string, output *chan []string) {
 
 	// Initialize the concurrency
 	for _, method := range availableMethods {
-		go concurrent(method, domain, &wg, &channel)
+		go concurrentSubdomainer(method, domain, &wg, &channel)
 	}
 
 	// Retrieve the results
@@ -41,12 +46,15 @@ func Subdomains(domain string, output *chan []string) {
 		*output <- nil
 		return
 	}
-
 	subdomains = utils.FilterDuplicates(subdomains)
 	*output <- utils.FilterDuplicates(subdomains)
 }
 
-func concurrent(method func(string) ([]string, error), domain string, wg *sync.WaitGroup, channel *chan []string) {
+// === PRIVATE METHODS ===
+
+// ==== Subconcurrency Method ====
+
+func concurrentSubdomainer(method func(string) ([]string, error), domain string, wg *sync.WaitGroup, channel *chan []string) {
 	defer wg.Done()
 	result, err := method(domain)
 	if err != nil {
@@ -105,95 +113,3 @@ func subdomainsInHackerTarget(domain string) ([]string, error) {
 	}
 	return subdomains, nil
 }
-
-/*
-import (
-	"errors"
-	"fmt"
-	"sync"
-
-)
-
-// Plugin allows it to be executed by Elliot
-type  struct{}
-
-type function func(string) ([]string, error)
-
-// Check that all parameters are defined correctly
-func (plgn Plugin) Check() error {
-	if !validator.IsValidDomain(env.Config.Target) {
-		return errors.New("A valid domain should be specified")
-	}
-
-	return nil
-}
-
-// Run is the entrypoint of the plugin
-func (plgn Plugin) Run() {
-	if err := plgn.Check(); err != nil {
-		env.Channels.Bad <- err
-		return
-	}
-
-	subdomains := make([]string, 0)
-
-	availableMethods := map[string]function{
-		"crtsh":        methodCtrSh,
-		"hackertarget": methodHackerTarget,
-		"threatcrowd":  methodThreatCrowd,
-	}
-
-	wg := sync.WaitGroup{}
-	nMethods := len(availableMethods)
-	channel := make(chan []string, 0)
-	defer close(channel)
-
-	wg.Add(nMethods)
-
-	for _, method := range availableMethods {
-		go concurrentMethod(method, env.Config.Target, &wg, &channel)
-	}
-
-	for nMethods > 0 {
-		nMethods--
-		subdomains = append(subdomains, <-channel...)
-	}
-
-	result := ""
-	filtered := filterDuplicates(subdomains)
-	for _, subdomain := range filtered {
-		if len(subdomain) > 0 && subdomain != "error check your search parameter" {
-			result = fmt.Sprintf("%s%s\n", result, subdomain)
-		}
-	}
-
-	env.Channels.Ok <- result
-	if err := plgn.Save(filtered); err != nil {
-		logrus.Error(err)
-	}
-}
-
-func concurrentMethod(method function, target string, wg *sync.WaitGroup, channel *chan []string) {
-	defer wg.Done()
-	subdomains, err := method(target)
-	if err != nil {
-		*channel <- nil
-	} else {
-		*channel <- subdomains
-	}
-}
-
-func filterDuplicates(data []string) []string {
-	var subdomains []string
-	duplicates := make(map[string]int)
-	// Iterate over all the subdomains
-	for _, subdomain := range data {
-		duplicates[subdomain]++
-		if duplicates[subdomain] == 1 {
-			subdomains = append(subdomains, subdomain)
-		}
-	}
-	return subdomains
-}
-
-*/

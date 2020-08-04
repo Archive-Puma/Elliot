@@ -2,22 +2,22 @@ package config
 
 // ====  WEB CONFIG  ====
 
-// Host Web Server Host
+// Host specifies the Web Server address
 const Host = "[::1]"
 
-// Port Web Server Port
-const Port = 8009
+// Port specifies the Web Server port
+const Port = 8010
 
 // ==== REDIS CONFIG ====
 
-// DBHost Redis Server Host
+// DBHost specifies the Redis Server Host
 const DBHost = "[::1]"
 
-// DBPort Redis Server Port
+// DBPort specifies the Redis Server Port
 const DBPort = 6379
 
-// DBPass Redis Server Password
+// DBPass specifies the Redis Server Password
 const DBPass = "foobar"
 
-// DBIndex Redis Server ID Database
+// DBIndex specifies the Redis Server ID Database
 const DBIndex = 0

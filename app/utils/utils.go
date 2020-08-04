@@ -1,5 +1,8 @@
 package utils
 
+// === PUBLIC METHODS ===
+
+// FilterDuplicates removes duplicates from a list
 func FilterDuplicates(data []string) []string {
 	var unique []string
 	duplicates := make(map[string]int)

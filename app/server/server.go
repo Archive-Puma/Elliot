@@ -1,5 +1,7 @@
 package server
 
+// === IMPORTS ===
+
 import (
 	"fmt"
 	"net/http"
@@ -8,7 +10,9 @@ import (
 	"github.com/cosasdepuma/elliot/app/config"
 )
 
-// NewServer TODO Doc
+// === PUBLIC METHODS ===
+
+// NewServer generates a new structure associated with the server
 func NewServer() *http.Server {
 	return &http.Server{
 		Addr:           fmt.Sprintf("%s:%d", config.Host, config.Port),
