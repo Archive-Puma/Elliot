@@ -1,0 +1,89 @@
+{{ define "dashboard" }}
+{{ template "header" }}
+
+<!-- === HEADER === -->
+
+<div class="page-header card">
+    <div class="row align-items-end">
+
+        <!-- === Title === -->
+
+        <div class="col-lg-6">
+            <div class="page-header-title">
+                <i class="bg-c-blue"><i data-feather="git-pull-request"></i></i>
+                <div class="d-inline">
+                    <h5>Domain Analysis</h5>
+                    <span>Extract public information about a domain</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- === Target === -->
+
+        <div class="col-lg-6">
+            <div class="page-header-breadcrumb">
+                <form method="POST" action="/api/target">
+                    <div class="input-group mb-0 d-flex justify-content-center">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="domain"><i data-feather="git-pull-request"></i></span>
+                        </div>
+                        <input type="text" name="target" class="form-control" style="max-width: 300px;"
+                            placeholder="Target domain"
+                            pattern="^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$">
+                        <div class="input-group-append">
+                            <input type="submit" value="Analyze" class="btn btn-outline-primary"></input>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="pcoded-inner-content">
+    <div class="main-body">
+        <div class="page-wrapper">
+            <div class="page-body">
+                <div class="row">
+
+                    <!-- === Subdomains === -->
+
+                    <div class="col-md-12 col-xl-8">
+                        <div class="card">
+                            <div class="card-header pb-0">
+                                <h4>Subdomains</h4>
+                                <hr>
+                            </div>
+                            <div class="card-block pt-0">
+                                <div class="dt-responsive table-responsive">
+                                    <table id="subdomains" class="table table-striped table-bordered nowrap">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Address</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{ range $i, $address := .Subdomains }}
+                                            <tr>
+                                                <td>{{ $i }}</td>
+                                                <td>{{ $address }}</td>
+                                                <td>{{ $i }}</td>
+                                            </tr>
+                                            {{ end }}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ template "footer" }}
+{{ end }}
