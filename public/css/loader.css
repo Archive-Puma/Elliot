@@ -31,11 +31,10 @@ html, body {
 }
 
 body {
-   background-color: #1a1a1a;
+   background-color: #243340;
 }
 
 .root {
-   color: #fff;
    height: 100vh;
 
    display: flex;

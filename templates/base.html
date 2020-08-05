@@ -31,6 +31,8 @@
     <link rel="stylesheet" type="text/css" href="/static/vendor/bootstrap/css/bootstrap.min.css">
     <!-- Waves -->
     <link rel="stylesheet" type="text/css" href="/static/vendor/waves/css/waves.min.css">
+    <!-- Feather -->
+    <link rel="stylesheet" type="text/css" href="/static/vendor/feather/css/feather.min.css">
     
     <!-- === STYLES === -->
 
@@ -63,7 +65,7 @@
 
                         <!-- === Logo === -->
 
-                        <a href="/dashboard">
+                        <a href="/domain/osint">
                             <img class="img-fluid" src="#logo" alt="Elliot" />
                         </a>
 
@@ -144,13 +146,20 @@
                                 
                                     <!-- === BugBounty Page === -->
 
-                                    <li class="active">
-                                        <a href="/index.html" class="waves-effect waves-dark">
+                                    <li class="pcoded-hasmenu pcoded-trigger">
+                                        <a href="javascript:void(0)" class="waves-effect waves-dark">
                                             <span class="pcoded-micon">
                                                 <i data-feather="git-pull-request"></i>
                                             </span>
                                             <span class="pcoded-mtext">Domain Analysis</span>
                                         </a>
+                                        <ul class="pcoded-submenu" style="display: block">
+                                            <li class="active">
+                                                <a href="/domain/osint" class="waves-effect waves-dark">
+                                                    <span class="pcoded-mtext">OSINT</span>
+                                                </a>
+                                            </li>
+                                        </ul>
                                     </li>
 
                                 </ul>

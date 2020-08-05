@@ -25,6 +25,8 @@ type Data struct {
 	Target     string
 	Subdomains []string
 	Whois      *modules.SWhois
+
+	ErrorMsg map[string]string
 }
 
 // === PUBLIC METHODS ===
@@ -48,6 +50,15 @@ func (db *DB) Purge() {
 	db.client.FlushAll()
 }
 
+// NewData resets the data structure
+func (db *DB) NewData() {
+	db.Data = &Data{
+		ErrorMsg: map[string]string{
+			"whois": "No whois information available",
+		},
+	}
+}
+
 // === Updaters ===
 
 // UpdateDomainOSINT updates all public information associated with a domain
@@ -61,7 +72,7 @@ func (db *DB) UpdateDomainOSINT() {
 
 // GetDomain returns the target domain
 func (db *DB) GetDomain() {
-	db.Data = new(Data)
+	db.NewData()
 	target, _ := db.client.Get("target").Result()
 	db.Data.Target = target
 }

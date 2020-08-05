@@ -12,7 +12,7 @@
             <div class="page-header-title">
                 <i class="bg-c-blue"><i data-feather="git-pull-request"></i></i>
                 <div class="d-inline">
-                    <h5>Domain Analysis</h5>
+                    <h5><span class="label label-info">OSINT</span> Domain Analysis</h5>
                     <span>Extract public information about a domain</span>
                 </div>
             </div>
@@ -22,13 +22,14 @@
 
         <div class="col-lg-6">
             <div class="page-header-breadcrumb">
-                <form method="POST" action="/api/target">
+                <form method="POST" action="/domain/osint">
                     <div class="input-group mb-0 d-flex justify-content-center">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="domain"><i data-feather="git-pull-request"></i></span>
                         </div>
                         <input type="text" name="target" class="form-control" style="max-width: 300px;"
                             placeholder="Target domain"
+                            value="{{ .Target }}"
                             pattern="^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$">
                         <div class="input-group-append">
                             <input type="submit" value="Analyze" class="btn btn-outline-primary"></input>
@@ -46,9 +47,62 @@
             <div class="page-body">
                 <div class="row">
 
+                    <!-- === Whois === -->
+
+                    <div class="col-md-12 col-xl-5">
+                        <div class="card">
+                            <div class="card-header pb-0">
+                                <h4>Whois</h4>
+                                <hr>
+                            </div>
+                            <div class="card-body pt-0">
+                                <table style="width:100%">
+                                    {{ if .Target }}
+                                    <tbody>
+                                        <tr>
+                                            <td>TLD</td>
+                                            <td class="float-right label label-primary">{{ .Whois.Domain }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Active</td>
+                                            <td class="float-right label label-{{ if .Whois.IsActive }}success{{ else }}danger{{ end }}">{{ .Whois.Status }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Created at</td>
+                                            <td class="float-right label label-info">{{ .Whois.Created }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Changed at</td>
+                                            <td class="float-right label label-info">{{ .Whois.Changed }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Phone<small>s</small></td>
+                                            <td class="d-flex justify-content-end">
+                                                {{ range .Whois.Phone }}
+                                                <a href="tel:{{ . }}" class="label label-warning">{{ . }}</a>
+                                                {{ end }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Email<small>s</small></td>
+                                            <td class="d-flex justify-content-end">
+                                                {{ range .Whois.Mail }}
+                                                <a href="mailto:{{ . }}" class="label label-warning">{{ . }}</a>
+                                                {{ end }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    {{ else }}
+                                        <p>{{ index .ErrorMsg "whois" }}</p>
+                                    {{ end }}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- === Subdomains === -->
 
-                    <div class="col-md-12 col-xl-8">
+                    <div class="col-md-12 col-xl-12">
                         <div class="card">
                             <div class="card-header pb-0">
                                 <h4>Subdomains</h4>
@@ -65,12 +119,25 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            {{ if .Subdomains }}
                                             {{ range $i, $address := .Subdomains }}
                                             <tr>
                                                 <td>{{ $i }}</td>
-                                                <td>{{ $address }}</td>
-                                                <td>{{ $i }}</td>
+                                                <td>
+                                                    <a href="https://nullrefer.com/?{{ $address }}">{{ $address }}</a>
+                                                </td>
+                                                <td>
+                                                    <a href="https://google.com/search?q=site:{{ $address }}"
+                                                        class="label label-primary">Google Site</a>
+                                                        <a href="https://bing.com/search?q=site:{{ $address }}"
+                                                        class="label label-warning">Bing Site</a>
+                                                        <a href="https://www.shodan.io/search?query={{ $address }}"
+                                                        class="label label-danger">Shodan</a>
+                                                        <a href="https://web.archive.org/web/*/http://{{ $address }}"
+                                                        class="label label-info">Archive</a>
+                                                </td>
                                             </tr>
+                                            {{ end }}
                                             {{ end }}
                                         </tbody>
                                     </table>
@@ -78,7 +145,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>

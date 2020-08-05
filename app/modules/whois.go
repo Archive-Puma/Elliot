@@ -7,14 +7,15 @@ import (
 	"net"
 	"regexp"
 	"time"
+
+	"github.com/cosasdepuma/elliot/app/utils"
 )
 
 // === CONSTANTS ===
 
 const (
-	defaultWhoisHost    = "whois.iana.org"
-	defaultWhoisPort    = "43"
-	defaultErrorMessage = "No whois information available"
+	defaultWhoisHost = "whois.iana.org"
+	defaultWhoisPort = "43"
 )
 
 // === STRUCTURES ===
@@ -50,6 +51,7 @@ func (whois *SWhois) parse(data string) {
 		for _, phone := range phones {
 			whois.Phone = append(whois.Phone, string(phone[1]))
 		}
+		whois.Phone = utils.FilterDuplicates(whois.Phone)
 	}
 	// Find email data
 	r = regexp.MustCompile("(?s)e-mail:\\s+(?P<email>[^\n]+)\n")
@@ -58,6 +60,7 @@ func (whois *SWhois) parse(data string) {
 		for _, mail := range mails {
 			whois.Mail = append(whois.Mail, string(mail[1]))
 		}
+		whois.Mail = utils.FilterDuplicates(whois.Mail)
 	}
 }
 
@@ -69,7 +72,6 @@ func Whois(domain string, channel *chan *SWhois) {
 	// Get the information
 	response := getWhois(domain)
 	if len(response) == 0 {
-		whois.Error = defaultErrorMessage
 		*channel <- whois
 		return
 	}
