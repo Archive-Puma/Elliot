@@ -1,5 +1,7 @@
 package elliot
 
+// === IMPORTS ===
+
 import (
 	"context"
 	"fmt"
@@ -13,10 +15,12 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/cosasdepuma/elliot/app/config"
-	"github.com/cosasdepuma/elliot/app/modules"
 	"github.com/cosasdepuma/elliot/app/server"
 )
 
+// === STRUCTURES ===
+
+// SBackend is a container structure with references to the database, router, server and HTML templates
 type SBackend struct {
 	DB        *server.DB
 	Router    *mux.Router
@@ -24,7 +28,7 @@ type SBackend struct {
 	Templates *template.Template
 }
 
-// Backend TODO Doc
+// Backend is the global instantiation of the container structure with references to the database, router, server and HTML templates
 var Backend = &SBackend{
 	DB:        server.NewDatabase(),
 	Router:    server.NewRouter(),
@@ -32,13 +36,12 @@ var Backend = &SBackend{
 	Templates: server.NewTemplates(),
 }
 
-// Entrypoint TODO Doc
-func (b *SBackend) Start() {
-	b.Router.HandleFunc("/", b.wIndex).Methods("GET")
-	b.Router.HandleFunc("/dashboard", b.wDashboard).Methods("GET", "POST")
-	b.Router.HandleFunc("/api/target", b.apiTarget).Methods("POST")
+// === STRUCTURES METHODS ===
 
-	b.Server.Handler = b.Router
+// Start is the method that starts the execution of the backend according to the configuration data provided in the config package
+func (b *SBackend) Start() {
+	// Configure the routes
+	b.ConfigureRoutes()
 	// Initialize the server
 	go func() {
 		fmt.Printf("🐹 Running on: http://%s:%d/\n", config.Host, config.Port)
@@ -55,37 +58,4 @@ func (b *SBackend) Start() {
 	defer cancel()
 	b.Server.Shutdown(ctx)
 	os.Exit(0)
-}
-
-// =================== WEB CONTENT ===================
-
-func (b SBackend) wIndex(w http.ResponseWriter, r *http.Request) {
-	b.Templates.ExecuteTemplate(w, "loader", nil)
-}
-
-func (b SBackend) wDashboard(w http.ResponseWriter, r *http.Request) {
-	data := b.DB.GetAll()
-	b.Templates.ExecuteTemplate(w, "dashboard", data)
-}
-
-// =================== API ===================
-
-func (b SBackend) apiTarget(w http.ResponseWriter, r *http.Request) {
-	target := r.FormValue("target")
-
-	if len(target) > 0 {
-		log.Println(fmt.Sprintf("Target added: %s", target))
-		b.DB.SetTarget(target)
-
-		cSubdomains := make(chan []string, 1)
-
-		go modules.Subdomains(target, &cSubdomains)
-
-		subdomains := <-cSubdomains
-		if subdomains != nil {
-			b.DB.SetSubdomains(subdomains)
-		}
-	}
-
-	http.Redirect(w, r, "/dashboard", 301)
 }

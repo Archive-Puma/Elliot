@@ -65,6 +65,7 @@ func concurrentSubdomainer(method func(string) ([]string, error), domain string,
 }
 
 // ==== Subdomain Methods ====
+// FIXME: API count exceeded - Increase Quota with Membership
 
 func subdomainsInThreatCrowd(domain string) ([]string, error) {
 	// Compose the URL

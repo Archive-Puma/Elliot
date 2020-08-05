@@ -41,11 +41,20 @@ func NewDatabase() *DB {
 	}
 }
 
-// === PRIVATE METHODS ===
+// === STRUCTURES METHODS ===
 
 // Purge deletes all the information hosted in the database
 func (db *DB) Purge() {
 	db.client.FlushAll()
+}
+
+// === Updaters ===
+
+// UpdateDomainOSINT updates all public information associated with a domain
+func (db *DB) UpdateDomainOSINT() {
+	db.GetDomain()
+	db.GetSubdomains()
+	db.GetWhois()
 }
 
 // === Getters: Domain ===
