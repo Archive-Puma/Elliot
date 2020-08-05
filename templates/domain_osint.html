@@ -1,4 +1,4 @@
-{{ define "dashboard" }}
+{{ define "domain osint" }}
 {{ template "header" }}
 
 <!-- === HEADER === -->
@@ -98,10 +98,10 @@
                                 </table>
                             </div>
                         </div>
-                    </div>
+                    </div> <!-- !whois -->
 
                     <!-- === Subdomains === -->
-
+                    
                     <div class="col-md-12 col-xl-12">
                         <div class="card">
                             <div class="card-header pb-0">
@@ -109,6 +109,9 @@
                                 <hr>
                             </div>
                             <div class="card-block pt-0">
+                                <div id="subdomain-graph" style="width:100%">
+                                    Hola
+                                </div>
                                 <div class="dt-responsive table-responsive">
                                     <table id="subdomains" class="table table-striped table-bordered nowrap">
                                         <thead>
@@ -144,12 +147,13 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> <!-- !subdomains -->
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 
 {{ template "footer" }}
 {{ end }}

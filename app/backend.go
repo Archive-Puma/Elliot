@@ -28,6 +28,8 @@ type SBackend struct {
 	Templates *template.Template
 }
 
+// === VARIABLES ===
+
 // Backend is the global instantiation of the container structure with references to the database, router, server and HTML templates
 var Backend = &SBackend{
 	DB:        server.NewDatabase(),

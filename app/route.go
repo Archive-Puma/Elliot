@@ -8,6 +8,9 @@ import "net/http"
 
 // ConfigureRoutes appends the necessary routes to the router for the backend to work properly
 func (b *SBackend) ConfigureRoutes() {
+
+	// --- Web ---
+
 	// Index / Loader route
 	b.Router.HandleFunc("/", wLoader).Methods("GET")
 	// /domain category
@@ -28,5 +31,5 @@ func wLoader(w http.ResponseWriter, r *http.Request) {
 
 func wDomainOSINT(w http.ResponseWriter, r *http.Request) {
 	Backend.DB.UpdateDomainOSINT()
-	Backend.Templates.ExecuteTemplate(w, "dashboard", Backend.DB.Data)
+	Backend.Templates.ExecuteTemplate(w, "domain osint", Backend.DB.Data)
 }
