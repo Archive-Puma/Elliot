@@ -19,7 +19,7 @@ func (b *SBackend) ConfigureRoutes() {
 	rdomain := b.Router.PathPrefix("/domain").Subrouter()
 	rdomain.Use(mDomain)
 	// /domain/osint
-	rdomain.HandleFunc("/", wDomain).Methods("GET", "POST")
+	rdomain.HandleFunc("", wDomain).Methods("GET", "POST")
 
 	// Link the Router with the Server
 	b.Server.Handler = b.Router

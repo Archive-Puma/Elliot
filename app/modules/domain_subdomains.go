@@ -1,28 +1,21 @@
 package modules
 
-/*
 // === IMPORTS ===
 
 import (
 	"bufio"
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"strings"
 	"sync"
 
 	"github.com/cosasdepuma/elliot/app/utils"
 )
 
+// === MODULE METHOD ===
 
-
-// === PUBLIC METHODS ===
-
-// Subdomains is a concurrent method to obtain the sub-domains associated to a domain using different services.
-func Subdomains(domain string, output *chan []string) {
+func moduleSubdomains(domain string, output *chan []string) {
 	availableMethods := [](func(string) ([]string, error)){
 		subdomainsInHackerTarget, subdomainsInThreatCrowd,
 	}
@@ -68,47 +61,37 @@ func concurrentSubdomainer(method func(string) ([]string, error), domain string,
 }
 
 // ==== Subdomain Methods ====
+
 // FIXME: API count exceeded - Increase Quota with Membership
 
-func sucuri(domain string) ([]string, error) {
-	// Compose the URL
-	url := fmt.Sprintf("https://sitecheck.sucuri.net/api/v3/\?scan\=http://%s", domain)
-	// Request the data
-	resp, err := http.Get(url)
-	if err != nil || resp.StatusCode != 200 {
-		return nil, errors.New("Sucuri is not available")
-	}
-	// Grab the content
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, errors.New("Sucuri does not respond correctly")
-	}
-	// Parse the JSON
-	subdomains := struct {
-		Ip []string `json:"subdomains"`
+func subdomainsInThreatCrowd(domain string) ([]string, error) {
+	service := "ThreadCrowd"
+	// Data structure
+	results := struct {
+		Subdomains []string `json:"subdomains"`
 	}{}
-	err = json.Unmarshal([]byte(body), &subdomains)
+	// Get the data
+	body, err := apiGet(service,
+		"https://www.threatcrowd.org/searchApi/v2/domain/report/?domain=%s",
+		domain)
+	// Parse the JSON
+	err = json.Unmarshal(body, &results)
 	if err != nil {
-		return nil, errors.New("Bad JSON format using ThreatCrowd")
+		return nil, fmt.Errorf("Bad JSON format using %s", service)
 	}
-	// Return the JSON
-	return subdomains.Results, nil
+	return results.Subdomains, err
 }
 
 func subdomainsInHackerTarget(domain string) ([]string, error) {
-	// Compose the URL
-	url := fmt.Sprintf("https://api.hackertarget.com/hostsearch/?q=%s", domain)
-	// Request the data
-	resp, err := http.Get(url)
-	if err != nil || resp.StatusCode != 200 {
-		return nil, errors.New("HackerTarget is not available")
-	}
-	// Grab the content
-	body, err := ioutil.ReadAll(resp.Body)
+	service := "HackerTarget"
+	// Get the data
+	body, err := apiGet(service,
+		"https://api.hackertarget.com/hostsearch/?q=%s",
+		domain)
 	if err != nil {
-		return nil, errors.New("HackerTarget does not respond correctly")
+		return nil, err
 	}
-	// Parse the Response
+	// Parse the data
 	subdomains := make([]string, 0)
 	sc := bufio.NewScanner(bytes.NewReader(body))
 	for sc.Scan() {
@@ -117,4 +100,3 @@ func subdomainsInHackerTarget(domain string) ([]string, error) {
 	}
 	return subdomains, nil
 }
-*/
