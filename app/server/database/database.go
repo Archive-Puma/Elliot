@@ -7,6 +7,8 @@ import (
 	"github.com/go-redis/redis"
 )
 
+// TODO: Documentation
+
 // === STRUCTURES ===
 
 type Database struct {
@@ -36,6 +38,40 @@ func (db Database) StoredData() *DBSchema {
 	return db.data
 }
 
+func (db Database) StoredDomainData() *DomainSchema {
+	if len(db.data.Domain.Value) == 0 {
+		db.GetDomain()
+		if len(db.data.Domain.Value) > 0 {
+			db.GetDomainIPv4()
+
+			db.GetDomainIPv6()
+			db.GetDomainSubdomains()
+
+			db.RefreshDomainWeb()
+			db.RefreshDomainWhois()
+		}
+	}
+	return &db.data.Domain
+}
+
+func (db Database) RefreshDomainWeb() {
+	db.GetDomainWebJS()
+	db.GetDomainWebLinks()
+	db.GetDomainWebRating()
+	db.GetDomainWebRedirects()
+	db.GetDomainWebServer()
+	db.GetDomainWebUrl()
+}
+
+func (db Database) RefreshDomainWhois() {
+	db.GetDomainWhoisChanged()
+	db.GetDomainWhoisCreated()
+	db.GetDomainWhoisEmails()
+	db.GetDomainWhoisPhones()
+	db.GetDomainWhoisStatus()
+	db.GetDomainWhoisTLD()
+}
+
 func (db *Database) Purge() {
 	db.client.FlushDB()
 	db.data = new(DBSchema)
@@ -61,8 +97,13 @@ func (db *Database) SetDomainIPv6(value string) {
 }
 
 func (db *Database) SetDomainSubdomains(value []string) {
-	db.data.Domain.Subdomains = value
 	db.client.RPush("domain:subdomains", value)
+	value, err := db.client.Sort("domain:subdomains", &redis.Sort{Alpha: true}).Result()
+	if err != nil {
+		value = make([]string, 0)
+	}
+	db.client.RPush("domain:subdomains", value)
+	db.data.Domain.Subdomains = value
 }
 
 // === Domain:Whois ===
@@ -92,13 +133,24 @@ func (db *Database) SetDomainWhoisChanged(value string) {
 }
 
 func (db *Database) SetDomainWhoisPhones(value []string) {
-	db.data.Domain.Whois.Phones = value
 	db.client.RPush("domain:whois:phones", value)
+	value, err := db.client.Sort("domain:whois:phones", &redis.Sort{Alpha: true}).Result()
+	if err != nil {
+		value = make([]string, 0)
+	}
+	db.client.RPush("domain:whois:phones", value)
+	db.data.Domain.Whois.Phones = value
 }
 
 func (db *Database) SetDomainWhoisEmails(value []string) {
-	db.data.Domain.Whois.Emails = value
 	db.client.RPush("domain:whois:emails", value)
+	value, err := db.client.Sort("domain:whois:emails", &redis.Sort{Alpha: true}).Result()
+	if err != nil {
+		value = make([]string, 0)
+	}
+	db.client.RPush("domain:whois:emails", value)
+	db.data.Domain.Whois.Emails = value
+
 }
 
 // === Domain:Web ===
@@ -119,18 +171,33 @@ func (db *Database) SetDomainWebRating(value string) {
 }
 
 func (db *Database) SetDomainWebRedirects(value []string) {
-	db.data.Domain.Web.Redirects = value
 	db.client.RPush("domain:web:redirects", value)
+	value, err := db.client.Sort("domain:web:redirects", &redis.Sort{Alpha: true}).Result()
+	if err != nil {
+		value = make([]string, 0)
+	}
+	db.client.RPush("domain:web:redirects", value)
+	db.data.Domain.Web.Redirects = value
 }
 
 func (db *Database) SetDomainWebLinks(value []string) {
-	db.data.Domain.Web.Links = value
 	db.client.RPush("domain:web:links", value)
+	value, err := db.client.Sort("domain:web:links", &redis.Sort{Alpha: true}).Result()
+	if err != nil {
+		value = make([]string, 0)
+	}
+	db.client.RPush("domain:web:links", value)
+	db.data.Domain.Web.Links = value
 }
 
 func (db *Database) SetDomainWebJS(value []string) {
-	db.data.Domain.Web.Js = value
 	db.client.RPush("domain:web:js", value)
+	value, err := db.client.Sort("domain:web:js", &redis.Sort{Alpha: true}).Result()
+	if err != nil {
+		value = make([]string, 0)
+	}
+	db.client.RPush("domain:web:js", value)
+	db.data.Domain.Web.Js = value
 }
 
 // === GETTERS ===

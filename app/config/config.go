@@ -6,7 +6,7 @@ package config
 const Host = "[::1]"
 
 // Port specifies the Web Server port
-const Port = 8008
+const Port = 8009
 
 // ==== REDIS CONFIG ====
 

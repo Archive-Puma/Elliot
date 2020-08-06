@@ -21,10 +21,6 @@ func (b *SBackend) ConfigureRoutes() {
 	// /domain/osint
 	rdomain.HandleFunc("/", wDomain).Methods("GET", "POST")
 
-	b.Router.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
-		Backend.Templates.ExecuteTemplate(w, "test", "It works!")
-	})
-
 	// Link the Router with the Server
 	b.Server.Handler = b.Router
 }
@@ -36,5 +32,5 @@ func wLoader(w http.ResponseWriter, r *http.Request) {
 }
 
 func wDomain(w http.ResponseWriter, r *http.Request) {
-	Backend.Templates.ExecuteTemplate(w, "domain", Backend.DB.StoredData().Domain)
+	Backend.Templates.ExecuteTemplate(w, "domain", Backend.DB.StoredDomainData())
 }
