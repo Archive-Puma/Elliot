@@ -1,4 +1,4 @@
-{{ define "domain osint" }}
+{{ define "domain" }}
 {{ template "header" }}
 
 <!-- === HEADER === -->
@@ -12,24 +12,26 @@
             <div class="page-header-title">
                 <i class="bg-c-blue"><i data-feather="git-pull-request"></i></i>
                 <div class="d-inline">
-                    <h5><span class="label label-info">OSINT</span> Domain Analysis</h5>
+                    <h5>Domain Analysis</h5>
                     <span>Extract public information about a domain</span>
                 </div>
             </div>
-        </div>
+        </div> <!-- !title -->
 
-        <!-- === Target === -->
-
+        <!-- === Domain === -->
+        
         <div class="col-lg-6">
             <div class="page-header-breadcrumb">
-                <form method="POST" action="/domain/osint">
+                <form method="POST" action="/domain">
                     <div class="input-group mb-0 d-flex justify-content-center">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="domain"><i data-feather="git-pull-request"></i></span>
                         </div>
-                        <input type="text" name="target" class="form-control" style="max-width: 300px;"
+                        <input type="text" name="domain" class="form-control" style="max-width: 300px;"
                             placeholder="Target domain"
-                            value="{{ .Target }}"
+                            {{ if .Value }}
+                            value="{{ .Value }}"
+                            {{ end }}
                             pattern="^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$">
                         <div class="input-group-append">
                             <input type="submit" value="Analyze" class="btn btn-outline-primary"></input>
@@ -37,7 +39,8 @@
                     </div>
                 </form>
             </div>
-        </div>
+        </div> <!-- !domain -->
+
     </div>
 </div>
 
@@ -57,15 +60,15 @@
                             </div>
                             <div class="card-body pt-0">
                                 <table style="width:100%">
-                                    {{ if .Target }}
+                                    {{ if .Value }}
                                     <tbody>
                                         <tr>
                                             <td>TLD</td>
-                                            <td class="float-right label label-primary">{{ .Whois.Domain }}</td>
+                                            <td class="float-right label label-primary">{{ .Whois.TLD }}</td>
                                         </tr>
                                         <tr>
                                             <td>Active</td>
-                                            <td class="float-right label label-{{ if .Whois.IsActive }}success{{ else }}danger{{ end }}">{{ .Whois.Status }}</td>
+                                            <td class="float-right label label-{{ if .Whois.Status }}success{{ else }}danger{{ end }}">{{ .Whois.Status }}</td>
                                         </tr>
                                         <tr>
                                             <td>Created at</td>
@@ -78,7 +81,7 @@
                                         <tr>
                                             <td>Phone<small>s</small></td>
                                             <td class="d-flex justify-content-end">
-                                                {{ range .Whois.Phone }}
+                                                {{ range .Whois.Phones }}
                                                 <a href="tel:{{ . }}" class="label label-warning">{{ . }}</a>
                                                 {{ end }}
                                             </td>
@@ -86,14 +89,14 @@
                                         <tr>
                                             <td>Email<small>s</small></td>
                                             <td class="d-flex justify-content-end">
-                                                {{ range .Whois.Mail }}
+                                                {{ range .Whois.Emails }}
                                                 <a href="mailto:{{ . }}" class="label label-warning">{{ . }}</a>
                                                 {{ end }}
                                             </td>
                                         </tr>
                                     </tbody>
                                     {{ else }}
-                                        <p>{{ index .ErrorMsg "whois" }}</p>
+                                        <p>No whois data available</p>
                                     {{ end }}
                                 </table>
                             </div>
@@ -101,7 +104,7 @@
                     </div> <!-- !whois -->
 
                     <!-- === Subdomains === -->
-                    
+
                     <div class="col-md-12 col-xl-12">
                         <div class="card">
                             <div class="card-header pb-0">
@@ -109,9 +112,6 @@
                                 <hr>
                             </div>
                             <div class="card-block pt-0">
-                                <div id="subdomain-graph" style="width:100%">
-                                    Hola
-                                </div>
                                 <div class="dt-responsive table-responsive">
                                     <table id="subdomains" class="table table-striped table-bordered nowrap">
                                         <thead>
@@ -148,6 +148,7 @@
                             </div>
                         </div>
                     </div> <!-- !subdomains -->
+                 
                 </div>
             </div>
         </div>

@@ -6,7 +6,7 @@ package config
 const Host = "[::1]"
 
 // Port specifies the Web Server port
-const Port = 8011
+const Port = 8008
 
 // ==== REDIS CONFIG ====
 
@@ -20,4 +20,4 @@ const DBPort = 6379
 const DBPass = "foobar"
 
 // DBIndex specifies the Redis Server ID Database
-const DBIndex = 0
+const DBIndex = 1

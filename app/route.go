@@ -2,7 +2,9 @@ package elliot
 
 // === IMPORTS ===
 
-import "net/http"
+import (
+	"net/http"
+)
 
 // === STRUCTURES METHODS ===
 
@@ -17,7 +19,11 @@ func (b *SBackend) ConfigureRoutes() {
 	rdomain := b.Router.PathPrefix("/domain").Subrouter()
 	rdomain.Use(mDomain)
 	// /domain/osint
-	rdomain.HandleFunc("/osint", wDomainOSINT).Methods("GET", "POST")
+	rdomain.HandleFunc("/", wDomain).Methods("GET", "POST")
+
+	b.Router.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
+		Backend.Templates.ExecuteTemplate(w, "test", "It works!")
+	})
 
 	// Link the Router with the Server
 	b.Server.Handler = b.Router
@@ -29,7 +35,6 @@ func wLoader(w http.ResponseWriter, r *http.Request) {
 	Backend.Templates.ExecuteTemplate(w, "loader", nil)
 }
 
-func wDomainOSINT(w http.ResponseWriter, r *http.Request) {
-	Backend.DB.UpdateDomainOSINT()
-	Backend.Templates.ExecuteTemplate(w, "domain osint", Backend.DB.Data)
+func wDomain(w http.ResponseWriter, r *http.Request) {
+	Backend.Templates.ExecuteTemplate(w, "domain", Backend.DB.StoredData().Domain)
 }

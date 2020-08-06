@@ -1,8 +1,6 @@
 package main
 
-import (
-	elliot "github.com/cosasdepuma/elliot/app"
-)
+import elliot "github.com/cosasdepuma/elliot/app"
 
 // Elliot Dev Resources:
 // -- Template: https://colorlib.com/polygon/admindek/default/index.html

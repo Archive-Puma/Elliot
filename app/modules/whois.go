@@ -20,65 +20,61 @@ const (
 
 // === STRUCTURES ===
 
-// SWhois is a structure to store relevant data about a domain following the standard IANA response
-type SWhois struct {
-	Domain   string
-	Status   string
-	IsActive bool
-	Created  string
-	Changed  string
-	Mail     []string
-	Phone    []string
-	Error    string
+type whois struct {
+	tld     string
+	status  bool
+	created string
+	changed string
+	email   []string
+	phone   []string
+}
+
+// === MODULE METHOD ===
+
+func moduleWhois(domain string, channel *chan *whois) {
+	w := &whois{}
+	// Get the information
+	response := getWhois(domain)
+	if len(response) == 0 {
+		*channel <- w
+		return
+	}
+	// Parse the response
+	w.parse(response)
+	// Return the Whois data
+	*channel <- w
 }
 
 // === STRUCTURES METHODS ===
 
-func (whois *SWhois) parse(data string) {
+func (w *whois) parse(data string) {
 	// Find essential data
-	r := regexp.MustCompile("(?s)domain:\\s+(?P<domain>[A-Z]+)\n.+status:\\s+(?P<status>[A-Z]+).+created:\\s+(?P<created>[0-9-]+).+changed:\\s+(?P<changed>[0-9-]+)")
+	r := regexp.MustCompile("(?s)domain:\\s+([A-Z]+)\n.+status:\\s+([A-Z]+).+created:\\s+([0-9-]+).+changed:\\s+([0-9-]+)")
 	found := r.FindStringSubmatch(data)
 	if len(found) == 5 {
-		whois.Domain = found[1]
-		whois.Status = found[2]
-		whois.Created = found[3]
-		whois.Changed = found[4]
+		w.tld = found[1]
+		w.status = found[2] == "ACTIVE"
+		w.created = found[3]
+		w.changed = found[4]
 	}
 	// Find phone data
 	r = regexp.MustCompile("(?s)phone:\\s+(?P<phone>[^\n]+)\n")
 	phones := r.FindAllStringSubmatch(data, -1)
 	if phones != nil {
 		for _, phone := range phones {
-			whois.Phone = append(whois.Phone, string(phone[1]))
+			w.phone = append(w.phone, string(phone[1]))
 		}
-		whois.Phone = utils.FilterDuplicates(whois.Phone)
+		w.phone = utils.FilterDuplicates(w.phone)
 	}
 	// Find email data
 	r = regexp.MustCompile("(?s)e-mail:\\s+(?P<email>[^\n]+)\n")
 	mails := r.FindAllStringSubmatch(data, -1)
 	if len(mails) > 1 {
 		for _, mail := range mails {
-			whois.Mail = append(whois.Mail, string(mail[1]))
+			w.email = append(w.email, string(mail[1]))
 		}
-		whois.Mail = utils.FilterDuplicates(whois.Mail)
+		w.email = utils.FilterDuplicates(w.email)
 	}
-}
-
-// === PUBLIC METHODS ===
-
-// Whois is a concurrent method for obtaining information about a domain.
-func Whois(domain string, channel *chan *SWhois) {
-	whois := &SWhois{}
-	// Get the information
-	response := getWhois(domain)
-	if len(response) == 0 {
-		*channel <- whois
-		return
-	}
-	// Parse the response
-	whois.parse(response)
-	// Return the Whois data
-	*channel <- whois
 }
 
 // === PRIVATE METHODS ===

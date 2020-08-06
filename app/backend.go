@@ -16,13 +16,14 @@ import (
 
 	"github.com/cosasdepuma/elliot/app/config"
 	"github.com/cosasdepuma/elliot/app/server"
+	"github.com/cosasdepuma/elliot/app/server/database"
 )
 
 // === STRUCTURES ===
 
 // SBackend is a container structure with references to the database, router, server and HTML templates
 type SBackend struct {
-	DB        *server.DB
+	DB        *database.Database
 	Router    *mux.Router
 	Server    *http.Server
 	Templates *template.Template
@@ -32,7 +33,7 @@ type SBackend struct {
 
 // Backend is the global instantiation of the container structure with references to the database, router, server and HTML templates
 var Backend = &SBackend{
-	DB:        server.NewDatabase(),
+	DB:        database.NewDatabase(),
 	Router:    server.NewRouter(),
 	Server:    server.NewServer(),
 	Templates: server.NewTemplates(),

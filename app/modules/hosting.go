@@ -1,5 +1,6 @@
 package modules
 
+/*
 // === IMPORTS ===
 
 import (
@@ -16,9 +17,12 @@ import (
 	"github.com/cosasdepuma/elliot/app/utils"
 )
 
-// === MODULE METHOD ===
 
-func moduleSubdomains(domain string, output *chan []string) {
+
+// === PUBLIC METHODS ===
+
+// Subdomains is a concurrent method to obtain the sub-domains associated to a domain using different services.
+func Subdomains(domain string, output *chan []string) {
 	availableMethods := [](func(string) ([]string, error)){
 		subdomainsInHackerTarget, subdomainsInThreatCrowd,
 	}
@@ -66,22 +70,22 @@ func concurrentSubdomainer(method func(string) ([]string, error), domain string,
 // ==== Subdomain Methods ====
 // FIXME: API count exceeded - Increase Quota with Membership
 
-func subdomainsInThreatCrowd(domain string) ([]string, error) {
+func sucuri(domain string) ([]string, error) {
 	// Compose the URL
-	url := fmt.Sprintf("https://www.threatcrowd.org/searchApi/v2/domain/report/?domain=%s", domain)
+	url := fmt.Sprintf("https://sitecheck.sucuri.net/api/v3/\?scan\=http://%s", domain)
 	// Request the data
 	resp, err := http.Get(url)
 	if err != nil || resp.StatusCode != 200 {
-		return nil, errors.New("ThreatCrowd is not available")
+		return nil, errors.New("Sucuri is not available")
 	}
 	// Grab the content
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, errors.New("ThreatCrowd does not respond correctly")
+		return nil, errors.New("Sucuri does not respond correctly")
 	}
 	// Parse the JSON
 	subdomains := struct {
-		Results []string `json:"subdomains"`
+		Ip []string `json:"subdomains"`
 	}{}
 	err = json.Unmarshal([]byte(body), &subdomains)
 	if err != nil {
@@ -113,3 +117,4 @@ func subdomainsInHackerTarget(domain string) ([]string, error) {
 	}
 	return subdomains, nil
 }
+*/
