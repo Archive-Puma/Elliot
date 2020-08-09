@@ -171,13 +171,8 @@ func (db *Database) SetDomainWebRating(value string) {
 }
 
 func (db *Database) SetDomainWebRedirects(value []string) {
-	db.client.RPush("domain:web:redirects", value)
-	value, err := db.client.Sort("domain:web:redirects", &redis.Sort{Alpha: true}).Result()
-	if err != nil {
-		value = make([]string, 0)
-	}
-	db.client.RPush("domain:web:redirects", value)
 	db.data.Domain.Web.Redirects = value
+	db.client.RPush("domain:web:redirects", value)
 }
 
 func (db *Database) SetDomainWebLinks(value []string) {
@@ -247,7 +242,7 @@ func (db *Database) GetDomainWhoisTLD() {
 }
 
 func (db *Database) GetDomainWhoisStatus() {
-	value, err := db.client.Get("domain:whois:tld").Result()
+	value, err := db.client.Get("domain:whois:status").Result()
 	data := false
 	if err == nil && value == "true" {
 		data = true

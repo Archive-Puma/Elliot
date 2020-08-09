@@ -47,7 +47,7 @@ func (b *SBackend) Start() {
 	b.ConfigureRoutes()
 	// Initialize the server
 	go func() {
-		fmt.Printf("🐹 Running on: http://%s:%d/\n", config.Host, config.Port)
+		fmt.Printf("🐹  Running on\thttp://%s:%d/\n", config.Host, config.Port)
 		if err := b.Server.ListenAndServe(); err != nil {
 			log.Fatal(err)
 		}

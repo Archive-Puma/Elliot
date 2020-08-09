@@ -1,0 +1,34 @@
+{{ define "domain/redirects" }}
+
+<!-- === Redirects === -->
+                   
+<div class="col-md-5 col-xl-4">
+    <div class="card latest-update-card">
+        <div class="card-header pb-0">
+            <h4>Redirects</h4>
+            <hr>
+        </div>
+        <div class="card-block">
+            {{ if not .Web.Redirects }}
+            <span>No redirects</span>
+            {{ else }}
+            <div class="scroll-widget">
+                <div class="latest-update-box">
+                    {{ range .Web.Redirects }}
+                    <div class="row p-b-30">
+                        <div class="col-auto text-right update-meta p-r-0">
+                            <i class="b-primary update-icon ring"></i>
+                        </div>
+                        <div class="col p-l-5">
+                            <p class="text-muted m-b-0">{{ . }}</p>
+                        </div>
+                    </div>
+                    {{ end }}
+                </div>
+            </div>
+            {{ end }}
+        </div>
+    </div>
+</div>
+
+{{ end }}

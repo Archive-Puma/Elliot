@@ -1,5 +1,5 @@
 {{ define "domain" }}
-{{ template "header" }}
+{{ template "header" . }}
 
 <!-- === HEADER === -->
 
@@ -47,94 +47,10 @@
             <div class="page-body">
                 <div class="row">
 
-                    <!-- === Whois === -->
-
-                    <div class="col-md-12 col-xl-5">
-                        <div class="card">
-                            <div class="card-header pb-0">
-                                <h4>Whois</h4>
-                                <hr>
-                            </div>
-                            <div class="card-body pt-0">
-                                <div class="dt-responsive table-responsive">
-
-                                    <table style="width:100%">
-                                        {{ if .Value }}
-                                        <tbody>
-                                            <tr>
-                                                <td>TLD</td>
-                                                <td class="float-right label label-primary">{{ .Whois.TLD }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Active</td>
-                                                <td
-                                                    class="float-right label label-{{ if .Whois.Status }}success{{ else }}danger{{ end }}">
-                                                    {{ .Whois.Status }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Created at</td>
-                                                <td class="float-right label label-info">{{ .Whois.Created }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Changed at</td>
-                                                <td class="float-right label label-info">{{ .Whois.Changed }}</td>
-                                            </tr>
-                                        </tbody>
-                                        {{ else }}
-                                        <p>No whois data available</p>
-                                        {{ end }}
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div> <!-- !whois -->
-
-                    <!-- === Subdomains === -->
-
-                    <div class="col-md-12 col-xl-12">
-                        <div class="card">
-                            <div class="card-header pb-0">
-                                <h4>Subdomains</h4>
-                                <hr>
-                            </div>
-                            <div class="card-block pt-0">
-                                <div class="dt-responsive table-responsive">
-                                    <table id="subdomains" class="table table-striped table-bordered nowrap">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Address</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {{ if .Subdomains }}
-                                            {{ range $i, $address := .Subdomains }}
-                                            <tr>
-                                                <td>{{ $i }}</td>
-                                                <td>
-                                                    <a href="https://nullrefer.com/?{{ $address }}">{{ $address }}</a>
-                                                </td>
-                                                <td>
-                                                    <a href="https://google.com/search?q=site:{{ $address }}"
-                                                        class="label label-primary">Google Site</a>
-                                                    <a href="https://bing.com/search?q=site:{{ $address }}"
-                                                        class="label label-warning">Bing Site</a>
-                                                    <a href="https://www.shodan.io/search?query={{ $address }}"
-                                                        class="label label-danger">Shodan</a>
-                                                    <a href="https://web.archive.org/web/*/http://{{ $address }}"
-                                                        class="label label-info">Archive</a>
-                                                </td>
-                                            </tr>
-                                            {{ end }}
-                                            {{ end }}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div> <!-- !subdomains -->
+                    {{ template "domain/whois" . }}
+                    {{ template "domain/webserver" . }}
+                    {{ template "domain/redirects" . }}
+                    {{ template "domain/subdomains" . }}
 
                 </div>
             </div>
@@ -143,5 +59,5 @@
 </div>
 
 
-{{ template "footer" }}
+{{ template "footer" . }}
 {{ end }}

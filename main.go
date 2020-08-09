@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	elliot "github.com/cosasdepuma/elliot/app"
-	"github.com/cosasdepuma/elliot/app/modules"
 )
 
 // Elliot Dev Resources:
@@ -14,13 +13,8 @@ import (
 // -- Bootstrap Doc: https://getbootstrap.com/docs/4.5/getting-started/introduction/
 
 func main() {
-	// Testing
-	// FIXME: Inactive first time in Elliot with some data in DB
 	// TODO: SiteCheck in Frontend
-	c := make(chan map[string]interface{}, 1)
-	defer close(c)
-	modules.ModuleSiteCheck("uvigo.es", &c)
-	fmt.Println(<-c)
 
+	fmt.Println("🤖  Starting\t\033[1;33mElliot\033[0m")
 	elliot.Backend.Start()
 }

@@ -8,5 +8,6 @@ import "html/template"
 
 // NewTemplates generates a new structure associated with the HTML templates served on the website
 func NewTemplates() *template.Template {
-	return template.Must(template.ParseGlob("templates/*.html"))
+	templates := template.Must(template.ParseGlob("templates/*.html"))
+	return template.Must(templates.ParseGlob("templates/modules/*.html"))
 }
