@@ -10,7 +10,6 @@
         </div>
         <div class="card-body pt-0">
             <div class="dt-responsive table-responsive">
-
                 <table style="width:100%">
                     {{ if .Value }}
                     <tbody>
@@ -52,11 +51,21 @@
                         </tr>
                         {{ end }}
                     </tbody>
-                    {{ else }}
-                    <p>No whois data available</p>
-                    {{ end }}
                 </table>
             </div>
+            {{ if ne .Web.Url "" }}
+            <hr>
+            <h5>External Analysis</h5>
+            <div class="d-flex justify-content-center mt-3">
+                <a href="https://www.google.com/search?q=site:{{ .Value }}" class="label label-primary">Google Site</a>
+                <a href="https://www.bing.com/search?q=site:{{ .Value }}" class="label label-warning">Bing Site</a>
+                <a href="https://web.archive.org/web/*/http://{{ .Value }}" class="label label-info">Archive</a>
+                {{ if ne .IPv4 "" }}<a href="https://www.shodan.io/host/{{ .IPv4 }}" class="label label-danger">Shodan</a>{{ end }}
+            </div>
+            {{ end }}
+            {{ else }}
+            <p>No whois data available</p>
+            {{ end }}
         </div>
     </div>
 </div> <!-- !whois -->

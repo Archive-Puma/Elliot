@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/cosasdepuma/elliot/app/config"
+	"github.com/cosasdepuma/elliot/pkg/config"
 )
 
 // === PUBLIC METHODS ===
@@ -16,7 +16,6 @@ import (
 func NewServer() *http.Server {
 	return &http.Server{
 		Addr:           fmt.Sprintf("%s:%d", config.Host, config.Port),
-		Handler:        nil,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 		IdleTimeout:    60 * time.Second,

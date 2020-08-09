@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/cosasdepuma/elliot/app/server/database"
+	"github.com/cosasdepuma/elliot/pkg/database"
 )
 
 // === PUBLIC METHODS ===

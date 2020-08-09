@@ -17,10 +17,12 @@
                             <td>Rating</td>
                             <td class="float-right label label-{{ if eq .Web.Rating "A" }}success{{ else }}warning{{ end }}">{{ .Web.Rating }}</td>
                         </tr>
+                        {{ if ne .Web.Server "" }}
                         <tr>
                             <td>Server</td>
                             <td class="float-right label label-info">{{ .Web.Server }}</td>
                         </tr>
+                        {{ end }}
                         <tr class="mt-2">
                             <td>URL</td>
                             <td class="float-right">

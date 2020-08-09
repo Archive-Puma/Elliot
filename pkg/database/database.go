@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 
-	"github.com/cosasdepuma/elliot/app/config"
+	"github.com/cosasdepuma/elliot/pkg/config"
 	"github.com/go-redis/redis"
 )
 
@@ -224,7 +224,7 @@ func (db *Database) GetDomainIPv6() {
 }
 
 func (db *Database) GetDomainSubdomains() {
-	value, err := db.client.LRange("domain:subdomains", 0, -1).Result()
+	value, err := db.client.Sort("domain:subdomains", &redis.Sort{Alpha: true}).Result()
 	if err != nil {
 		value = make([]string, 0)
 	}

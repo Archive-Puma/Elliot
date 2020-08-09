@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	elliot "github.com/cosasdepuma/elliot/app"
+	elliot "github.com/cosasdepuma/elliot/pkg/app"
 )
 
 // Elliot Dev Resources:
@@ -16,5 +16,5 @@ func main() {
 	// TODO: SiteCheck in Frontend
 
 	fmt.Println("🤖  Starting\t\033[1;33mElliot\033[0m")
-	elliot.Backend.Start()
+	elliot.Start()
 }

@@ -15,7 +15,7 @@
                         <tr>
                             <th>#</th>
                             <th>Address</th>
-                            <th>Status</th>
+                            <th>External Analysis</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -31,10 +31,10 @@
                                     class="label label-primary">Google Site</a>
                                 <a href="https://bing.com/search?q=site:{{ $address }}" class="label label-warning">Bing
                                     Site</a>
+                                <a href="https://web.archive.org/web/*/http://{{ $address }}"
+                                        class="label label-info">Archive</a>
                                 <a href="https://www.shodan.io/search?query={{ $address }}"
                                     class="label label-danger">Shodan</a>
-                                <a href="https://web.archive.org/web/*/http://{{ $address }}"
-                                    class="label label-info">Archive</a>
                             </td>
                         </tr>
                         {{ end }}

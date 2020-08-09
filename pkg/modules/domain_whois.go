@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/cosasdepuma/elliot/app/utils"
+	"github.com/cosasdepuma/elliot/pkg/utils"
 )
 
 // === CONSTANTS ===

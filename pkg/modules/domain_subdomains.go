@@ -10,7 +10,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/cosasdepuma/elliot/app/utils"
+	"github.com/cosasdepuma/elliot/pkg/utils"
 )
 
 // === MODULE METHOD ===
@@ -74,6 +74,9 @@ func subdomainsInThreatCrowd(domain string) ([]string, error) {
 	body, err := apiGet(service,
 		"https://www.threatcrowd.org/searchApi/v2/domain/report/?domain=%s",
 		domain)
+	if err != nil {
+		return nil, err
+	}
 	// Parse the JSON
 	err = json.Unmarshal(body, &results)
 	if err != nil {
