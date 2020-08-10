@@ -13,7 +13,7 @@ import (
 
 func configureRouter() *mux.Router {
 	// Serves static files and initialize the Router
-	static := http.FileServer(http.Dir("public/"))
+	static := http.FileServer(http.Dir("frontend/public/"))
 	router := mux.NewRouter().StrictSlash(true)
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", static))
 	// Index / Loader route

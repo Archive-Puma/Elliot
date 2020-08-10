@@ -9,9 +9,9 @@
             <hr>
         </div>
         <div class="card-body pt-0">
+            {{ if .Value }}
             <div class="dt-responsive table-responsive">
                 <table style="width:100%">
-                    {{ if .Value }}
                     <tbody>
                         <tr>
                             <td>TLD</td>
@@ -53,6 +53,9 @@
                     </tbody>
                 </table>
             </div>
+            {{ else }}
+            <p>No whois data available</p>
+            {{ end }}
             {{ if ne .Web.Url "" }}
             <hr>
             <h5>External Analysis</h5>
@@ -62,9 +65,6 @@
                 <a href="https://web.archive.org/web/*/http://{{ .Value }}" class="label label-info">Archive</a>
                 {{ if ne .IPv4 "" }}<a href="https://www.shodan.io/host/{{ .IPv4 }}" class="label label-danger">Shodan</a>{{ end }}
             </div>
-            {{ end }}
-            {{ else }}
-            <p>No whois data available</p>
             {{ end }}
         </div>
     </div>
